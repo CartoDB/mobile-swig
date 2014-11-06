@@ -1872,6 +1872,8 @@ public:
     // Pure Java interfaces
     const String *pure_interfaces = typemapLookup(n, "javainterfaces", typemap_lookup_type, WARN_NONE);
 
+    Printv(proxy_class_def, typemapLookup(n, "javaimports", typemap_lookup_type, WARN_NONE), "\n", NIL);
+
     //translate and write javadoc comment if flagged
     if (doxygen && doxygenTranslator->hasDocumentation(n)){
       String *doxygen_comments=doxygenTranslator->getDocumentation(n);
@@ -1882,8 +1884,7 @@ public:
     }
       
     // Start writing the proxy class
-    Printv(proxy_class_def, typemapLookup(n, "javaimports", typemap_lookup_type, WARN_NONE),	// Import statements
-	   "\n", typemapLookup(n, "javaclassmodifiers", typemap_lookup_type, WARN_JAVA_TYPEMAP_CLASSMOD_UNDEF),	// Class modifiers
+    Printv(proxy_class_def, typemapLookup(n, "javaclassmodifiers", typemap_lookup_type, WARN_JAVA_TYPEMAP_CLASSMOD_UNDEF),	// Class modifiers
 	   " $javaclassname",	// Class name and bases
 	   (*Char(wanted_base)) ? " extends " : "", wanted_base, *Char(pure_interfaces) ?	// Pure Java interfaces
 	   " implements " : "", pure_interfaces, " {", derived ? typemapLookup(n, "javabody_derived", typemap_lookup_type, WARN_JAVA_TYPEMAP_JAVABODY_UNDEF) :	// main body of class
