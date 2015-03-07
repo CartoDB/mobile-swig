@@ -169,48 +169,90 @@ SWIGEXPORT void SWIGSTDCALL SWIGRegisterExceptionArgumentCallbacks_$module(
                                 ExceptionArgumentDelegate argumentNullDelegate,
                                 ExceptionArgumentDelegate argumentOutOfRangeDelegate);
 
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(ExceptionDelegate))]
+    #endif
     static void SetPendingApplicationException(string message) {
       SWIGPendingException.Set(new System.ApplicationException(message, SWIGPendingException.Retrieve()));
     }
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(ExceptionDelegate))]
+    #endif
     static void SetPendingArithmeticException(string message) {
       SWIGPendingException.Set(new System.ArithmeticException(message, SWIGPendingException.Retrieve()));
     }
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(ExceptionDelegate))]
+    #endif
     static void SetPendingDivideByZeroException(string message) {
       SWIGPendingException.Set(new System.DivideByZeroException(message, SWIGPendingException.Retrieve()));
     }
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(ExceptionDelegate))]
+    #endif
     static void SetPendingIndexOutOfRangeException(string message) {
       SWIGPendingException.Set(new System.IndexOutOfRangeException(message, SWIGPendingException.Retrieve()));
     }
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(ExceptionDelegate))]
+    #endif
     static void SetPendingInvalidCastException(string message) {
       SWIGPendingException.Set(new System.InvalidCastException(message, SWIGPendingException.Retrieve()));
     }
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(ExceptionDelegate))]
+    #endif
     static void SetPendingInvalidOperationException(string message) {
       SWIGPendingException.Set(new System.InvalidOperationException(message, SWIGPendingException.Retrieve()));
     }
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(ExceptionDelegate))]
+    #endif
     static void SetPendingIOException(string message) {
       SWIGPendingException.Set(new System.IO.IOException(message, SWIGPendingException.Retrieve()));
     }
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(ExceptionDelegate))]
+    #endif
     static void SetPendingNullReferenceException(string message) {
       SWIGPendingException.Set(new System.NullReferenceException(message, SWIGPendingException.Retrieve()));
     }
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(ExceptionDelegate))]
+    #endif
     static void SetPendingOutOfMemoryException(string message) {
       SWIGPendingException.Set(new System.OutOfMemoryException(message, SWIGPendingException.Retrieve()));
     }
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(ExceptionDelegate))]
+    #endif
     static void SetPendingOverflowException(string message) {
       SWIGPendingException.Set(new System.OverflowException(message, SWIGPendingException.Retrieve()));
     }
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(ExceptionDelegate))]
+    #endif
     static void SetPendingSystemException(string message) {
       SWIGPendingException.Set(new System.SystemException(message, SWIGPendingException.Retrieve()));
     }
 
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(ExceptionArgumentDelegate))]
+    #endif
     static void SetPendingArgumentException(string message, string paramName) {
       SWIGPendingException.Set(new System.ArgumentException(message, paramName, SWIGPendingException.Retrieve()));
     }
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(ExceptionArgumentDelegate))]
+    #endif
     static void SetPendingArgumentNullException(string message, string paramName) {
       Exception e = SWIGPendingException.Retrieve();
       if (e != null) message = message + " Inner Exception: " + e.Message;
       SWIGPendingException.Set(new System.ArgumentNullException(paramName, message));
     }
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(ExceptionArgumentDelegate))]
+    #endif
     static void SetPendingArgumentOutOfRangeException(string message, string paramName) {
       Exception e = SWIGPendingException.Retrieve();
       if (e != null) message = message + " Inner Exception: " + e.Message;
@@ -297,6 +339,9 @@ static SWIG_CSharpStringHelperCallback SWIG_csharp_string_callback = NULL;
     [DllImport("$dllimport", EntryPoint="SWIGRegisterStringCallback_$module")]
     public static extern void SWIGRegisterStringCallback_$module(SWIGStringDelegate stringDelegate);
 
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(SWIGStringDelegate))]
+    #endif
     static string CreateString(string cString) {
       return cString;
     }

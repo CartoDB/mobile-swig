@@ -1719,8 +1719,9 @@ public:
 	Printf(proxy_class_code, "    if (SwigDerivedClassHasMethod(\"%s\", swigMethodTypes%s))\n", method, methid);
 	Printf(proxy_class_code, "      swigDelegate%s = new SwigDelegate%s_%s(SwigDirector%s);\n", methid, proxy_class_name, methid, overname);
       }
+      Printf(proxy_class_code, "    swigSelfHandle = GCHandle.Alloc(this, GCHandleType.Normal);\n");
       String *director_connect_method_name = Swig_name_member(getNSpace(), proxy_class_name, "director_connect");
-      Printf(proxy_class_code, "    %s.%s(swigCPtr", imclass_name, director_connect_method_name);
+      Printf(proxy_class_code, "    %s.%s(swigCPtr, GCHandle.ToIntPtr(swigSelfHandle)", imclass_name, director_connect_method_name);
       for (i = first_class_dmethod; i < curr_class_dmethod; ++i) {
 	UpcallData *udata = Getitem(dmethods_seq, i);
 	String *methid = Getattr(udata, "class_methodidx");
@@ -3388,10 +3389,10 @@ public:
       Insert(qualified_classname, 0, NewStringf("%s.", nspace));
 
     Printv(imclass_class_code, "\n  [DllImport(\"", dllimport, "\", EntryPoint=\"", wname, "\")]\n", NIL);
-    Printf(imclass_class_code, "  public static extern void %s(HandleRef jarg1", swig_director_connect);
+    Printf(imclass_class_code, "  public static extern void %s(HandleRef jarg1, IntPtr callbackArg", swig_director_connect);
 
     Wrapper *code_wrap = NewWrapper();
-    Printf(code_wrap->def, "SWIGEXPORT void SWIGSTDCALL %s(void *objarg", wname);
+    Printf(code_wrap->def, "SWIGEXPORT void SWIGSTDCALL %s(void *objarg, void *callbackarg", wname);
 
     if (Len(smartptr)) {
       Printf(code_wrap->code, "  %s *obj = (%s *)objarg;\n", smartptr, smartptr);
@@ -3406,17 +3407,14 @@ public:
 
     // TODO: if statement not needed?? - Java too
     Printf(code_wrap->code, "  if (director) {\n");
-    Printf(code_wrap->code, "    director->swig_connect_director(");
+    Printf(code_wrap->code, "    director->swig_connect_director(callbackarg");
 
     for (int i = first_class_dmethod; i < curr_class_dmethod; ++i) {
       UpcallData *udata = Getitem(dmethods_seq, i);
       String *methid = Getattr(udata, "class_methodidx");
 
-      Printf(code_wrap->def, ", ");
-      if (i != first_class_dmethod)
-	Printf(code_wrap->code, ", ");
-      Printf(code_wrap->def, "%s::SWIG_Callback%s_t callback%s", dirClassName, methid, methid);
-      Printf(code_wrap->code, "callback%s", methid);
+      Printf(code_wrap->def, ", %s::SWIG_Callback%s_t callback%s", dirClassName, methid, methid);
+      Printf(code_wrap->code, ", callback%s", methid);
       Printf(imclass_class_code, ", %s.SwigDelegate%s_%s delegate%s", qualified_classname, sym_name, methid, methid);
     }
 
@@ -3472,8 +3470,8 @@ public:
     SwigType *c_ret_type = NULL;
     String *jupcall_args = NewString("");
     String *imclass_dmethod;
-    String *callback_typedef_parms = NewString("");
-    String *delegate_parms = NewString("");
+    String *callback_typedef_parms = NewString("void *");
+    String *delegate_parms = NewString("IntPtr selfPtr");
     String *proxy_method_types = NewString("");
     String *callback_def = NewString("");
     String *callback_code = NewString("");
@@ -3549,7 +3547,7 @@ public:
 	  Printf(director_delegate_definitions, "  %s\n", im_directoroutattributes);
       }
 
-      Printf(callback_def, "  private %s SwigDirector%s(", tm, overloaded_name);
+      Printf(callback_def, "  private static %s SwigDirector%s(", tm, overloaded_name);
       if (!ignored_method)
 	Printf(director_delegate_definitions, "  public delegate %s", tm);
     } else {
@@ -3616,9 +3614,7 @@ public:
       Printf(arg, "j%s", ln);
 
       /* And add to the upcall args */
-      if (i > 0)
-	Printf(jupcall_args, ", ");
-      Printf(jupcall_args, "%s", arg);
+      Printf(jupcall_args, ", %s", arg);
 
       /* Get parameter's intermediary C type */
       if ((c_param_type = Getattr(p, "tmap:ctype"))) {
@@ -3643,8 +3639,7 @@ public:
 	      Printf(w->code, "%s\n", tm);
 
 	  /* Add C type to callback typedef */
-	  if (i > 0)
-	    Printf(callback_typedef_parms, ", ");
+	  Printf(callback_typedef_parms, ", ");
 	  Printf(callback_typedef_parms, "%s", c_param_type);
 
 	  /* Add parameter to the intermediate class code if generating the
@@ -3691,11 +3686,10 @@ public:
 	      }
 
 	      if (i > 0) {
-		Printf(delegate_parms, ", ");
 		Printf(proxy_method_types, ", ");
 		Printf(imcall_args, ", ");
 	      }
-	      Printf(delegate_parms, "%s%s %s", im_directorinattributes ? im_directorinattributes : empty_string, tm, ln);
+	      Printf(delegate_parms, ", %s%s %s", im_directorinattributes ? im_directorinattributes : empty_string, tm, ln);
 
 	      if (Cmp(din, ln)) {
 		Printv(imcall_args, din, NIL);
@@ -3795,7 +3789,9 @@ public:
 
     /* Emit the intermediate class's upcall to the actual class */
 
-    String *upcall = NewStringf("%s(%s)", symname, imcall_args);
+    Printf(callback_code, "    var selfHandle = GCHandle.FromIntPtr(selfPtr);\n");
+    Printf(callback_code, "    var self = (%s)selfHandle.Target;\n", classname);
+    String *upcall = NewStringf("self.%s(%s)", symname, imcall_args);
 
     if ((tm = Swig_typemap_lookup("csdirectorout", n, "", 0))) {
       substituteClassname(returntype, tm);
@@ -3827,7 +3823,7 @@ public:
       if (!is_void)
 	Printf(w->code, "jresult = (%s) ", c_ret_type);
 
-      Printf(w->code, "swig_callback%s(%s);\n", overloaded_name, jupcall_args);
+      Printf(w->code, "swig_callback%s(swig_callbackarg%s);\n", overloaded_name, jupcall_args);
 
       if (!is_void) {
 	String *jresult_str = NewString("jresult");
@@ -3892,8 +3888,6 @@ public:
       } else {
 	Replaceall(w->code, "$null", "");
       }
-      if (!ignored_method)
-	Printv(director_delegate_callback, "\n", callback_def, callback_code, NIL);
       if (!Getattr(n, "defaultargs")) {
 	Replaceall(w->code, "$symname", symname);
 	Wrapper_print(w, f_directors);
@@ -3907,10 +3901,12 @@ public:
       UpcallData *udata = addUpcallMethod(imclass_dmethod, symname, decl, overloaded_name);
       String *methid = Getattr(udata, "class_methodidx");
       Setattr(n, "upcalldata", udata);
+
       /*
       Printf(stdout, "setting upcalldata, nodeType: %s %s::%s %p\n", nodeType(n), classname, Getattr(n, "name"), n);
       */
 
+      Printf(director_delegate_callback, "  #if __IOS__\n  [ObjCRuntime.MonoPInvokeCallback(typeof(SwigDelegate%s_%s))]\n  #endif\n%s%s\n", classname, methid, callback_def, callback_code);
       Printf(director_callback_typedefs, "    typedef %s (SWIGSTDCALL* SWIG_Callback%s_t)(", c_ret_type, methid);
       Printf(director_callback_typedefs, "%s);\n", callback_typedef_parms);
       Printf(director_callbacks, "    SWIG_Callback%s_t swig_callback%s;\n", methid, overloaded_name);
@@ -4087,22 +4083,19 @@ public:
       Printf(f_directors_h, "\n%s", director_callback_typedefs);
     }
 
-    Printf(f_directors_h, "    void swig_connect_director(");
+    Printf(f_directors_h, "    void swig_connect_director(void *callbackarg");
 
-    Printf(w->def, "void %s::swig_connect_director(", director_classname);
+    Printf(w->def, "void %s::swig_connect_director(void *callbackarg", director_classname);
 
+    Printf(w->code, "swig_callbackarg = callbackarg;\n");
     for (i = first_class_dmethod; i < curr_class_dmethod; ++i) {
       UpcallData *udata = Getitem(dmethods_seq, i);
       String *methid = Getattr(udata, "class_methodidx");
       String *overname = Getattr(udata, "overname");
 
-      Printf(f_directors_h, "SWIG_Callback%s_t callback%s", methid, overname);
-      Printf(w->def, "SWIG_Callback%s_t callback%s", methid, overname);
+      Printf(f_directors_h, ", SWIG_Callback%s_t callback%s", methid, overname);
+      Printf(w->def, ", SWIG_Callback%s_t callback%s", methid, overname);
       Printf(w->code, "swig_callback%s = callback%s;\n", overname, overname);
-      if (i != curr_class_dmethod - 1) {
-	Printf(f_directors_h, ", ");
-	Printf(w->def, ", ");
-      }
     }
 
     Printf(f_directors_h, ");\n");
@@ -4112,11 +4105,13 @@ public:
     if (Len(director_callbacks) > 0) {
       Printf(f_directors_h, "\nprivate:\n%s", director_callbacks);
     }
+    Printf(f_directors_h, "    void *swig_callbackarg;\n");
     Printf(f_directors_h, "    void swig_init_callbacks();\n");
     Printf(f_directors_h, "};\n\n");
     Printf(w->code, "}\n\n");
 
     Printf(w->code, "void %s::swig_init_callbacks() {\n", director_classname);
+    Printf(w->code, "  swig_callbackarg = 0;\n");
     for (i = first_class_dmethod; i < curr_class_dmethod; ++i) {
       UpcallData *udata = Getitem(dmethods_seq, i);
       String *overname = Getattr(udata, "overname");

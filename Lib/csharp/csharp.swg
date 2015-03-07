@@ -831,6 +831,7 @@ SWIGINTERN const char * SWIG_UnpackData(const char *c, void *ptr, size_t sz) {
 // Proxy classes (base classes, ie, not derived classes)
 %typemap(csbody) TYPE %{
   private HandleRef swigCPtr;
+  private GCHandle swigSelfHandle;
   protected bool swigCMemOwn;
 
   PTRCTOR_VISIBILITY $csclassname(IntPtr cPtr, bool cMemoryOwn) {
@@ -846,6 +847,7 @@ SWIGINTERN const char * SWIG_UnpackData(const char *c, void *ptr, size_t sz) {
 // Derived proxy classes
 %typemap(csbody_derived) TYPE %{
   private HandleRef swigCPtr;
+  private GCHandle swigSelfHandle;
 
   PTRCTOR_VISIBILITY $csclassname(IntPtr cPtr, bool cMemoryOwn) : base($imclassname.$csclazznameSWIGUpcast(cPtr), cMemoryOwn) {
     swigCPtr = new HandleRef(this, cPtr);
@@ -861,6 +863,7 @@ SWIGINTERN const char * SWIG_UnpackData(const char *c, void *ptr, size_t sz) {
 // Typewrapper classes
 %typemap(csbody) TYPE *, TYPE &, TYPE [] %{
   private HandleRef swigCPtr;
+  private GCHandle swigSelfHandle;
 
   PTRCTOR_VISIBILITY $csclassname(IntPtr cPtr, bool futureUse) {
     swigCPtr = new HandleRef(this, cPtr);
@@ -916,6 +919,9 @@ SWIG_CSBODY_TYPEWRAPPER(internal, protected, internal, SWIGTYPE)
         }
         swigCPtr = new HandleRef(null, IntPtr.Zero);
       }
+      if (swigSelfHandle.IsAllocated) {
+        swigSelfHandle.Free();
+      }
       GC.SuppressFinalize(this);
     }
   }
@@ -928,6 +934,9 @@ SWIG_CSBODY_TYPEWRAPPER(internal, protected, internal, SWIGTYPE)
           $imcall;
         }
         swigCPtr = new HandleRef(null, IntPtr.Zero);
+      }
+      if (swigSelfHandle.IsAllocated) {
+        swigSelfHandle.Free();
       }
       GC.SuppressFinalize(this);
       base.Dispose();

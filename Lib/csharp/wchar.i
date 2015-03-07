@@ -26,6 +26,9 @@ static SWIG_CSharpWStringHelperCallback SWIG_csharp_wstring_callback = NULL;
     [DllImport("$dllimport", EntryPoint="SWIGRegisterWStringCallback_$module")]
     public static extern void SWIGRegisterWStringCallback_$module(SWIGWStringDelegate wstringDelegate);
 
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(SWIGWStringDelegate))]
+    #endif
     static string CreateWString([MarshalAs(UnmanagedType.LPWStr)]IntPtr cString) {
       return System.Runtime.InteropServices.Marshal.PtrToStringUni(cString);
     }

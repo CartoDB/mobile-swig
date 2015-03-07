@@ -287,6 +287,7 @@
 // Base proxy classes
 %typemap(csbody) TYPE %{
   private HandleRef swigCPtr;
+  private GCHandle swigSelfHandle;
   private bool swigCMemOwnBase;
 
   PTRCTOR_VISIBILITY $csclassname(IntPtr cPtr, bool cMemoryOwn) {
@@ -302,6 +303,7 @@
 // Derived proxy classes
 %typemap(csbody_derived) TYPE %{
   private HandleRef swigCPtr;
+  private GCHandle swigSelfHandle;
   private bool swigCMemOwnDerived;
 
   PTRCTOR_VISIBILITY $csclassname(IntPtr cPtr, bool cMemoryOwn) : base($imclassname.$csclazznameSWIGSmartPtrUpcast(cPtr), true) {
@@ -323,6 +325,9 @@
         }
         swigCPtr = new HandleRef(null, IntPtr.Zero);
       }
+      if (swigSelfHandle.IsAllocated) {
+        swigSelfHandle.Free();
+      }
       GC.SuppressFinalize(this);
     }
   }
@@ -335,6 +340,9 @@
           $imcall;
         }
         swigCPtr = new HandleRef(null, IntPtr.Zero);
+      }
+      if (swigSelfHandle.IsAllocated) {
+        swigSelfHandle.Free();
       }
       GC.SuppressFinalize(this);
       base.Dispose();
@@ -446,6 +454,7 @@
 // Base proxy classes
 %typemap(csbody) TYPE %{
   private HandleRef swigCPtr;
+  private GCHandle swigSelfHandle;
   private bool swigCMemOwnBase;
 
   PTRCTOR_VISIBILITY $csclassname(IntPtr cPtr, bool cMemoryOwn) {
@@ -461,6 +470,7 @@
 // Derived proxy classes
 %typemap(csbody_derived) TYPE %{
   private HandleRef swigCPtr;
+  private GCHandle swigSelfHandle;
   private bool swigCMemOwnDerived;
 
   PTRCTOR_VISIBILITY $csclassname(IntPtr cPtr, bool cMemoryOwn) : base($imclassname.$csclazznameSWIGSmartPtrUpcast(cPtr), true) {
@@ -482,6 +492,9 @@
         }
         swigCPtr = new HandleRef(null, IntPtr.Zero);
       }
+      if (swigSelfHandle.IsAllocated) {
+        swigSelfHandle.Free();
+      }
       GC.SuppressFinalize(this);
     }
   }
@@ -494,6 +507,9 @@
           $imcall;
         }
         swigCPtr = new HandleRef(null, IntPtr.Zero);
+      }
+      if (swigSelfHandle.IsAllocated) {
+        swigSelfHandle.Free();
       }
       GC.SuppressFinalize(this);
       base.Dispose();
