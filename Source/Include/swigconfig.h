@@ -46,9 +46,6 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
 
-/* Define to 1 if your C compiler doesn't accept -c and -o together. */
-/* #undef NO_MINUS_C_MINUS_O */
-
 /* Name of package */
 #define PACKAGE "swig"
 
@@ -87,7 +84,7 @@
 #define SWIG_LIB_WIN_UNIX ""
 
 /* Platform that SWIG is built for */
-#define SWIG_PLATFORM "x86_64-apple-darwin13.3.0"
+#define SWIG_PLATFORM "x86_64-apple-darwin14.1.0"
 
 /* Version number of package */
 #define VERSION "2.0.11"

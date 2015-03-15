@@ -364,6 +364,64 @@ SWIGEXPORT void SWIGSTDCALL SWIGRegisterStringCallback_$module(SWIG_CSharpString
 %}
 #endif // SWIG_CSHARP_NO_STRING_HELPER
 
+#if !defined(SWIG_CSHARP_NO_GCHANDLE_HELPER)
+%insert(runtime) %{
+/* Callback for updating GCHandle to strong/weak */
+/* mode = 0 means release GCHandle */
+/* mode = 1 means release GCHandle and create new weak GCHandle */
+/* mode = 2 means release GCHandle and create new strong GCHandle */
+typedef void * (SWIGSTDCALL* SWIG_CSharpGCHandleHelperCallback)(void *, int mode);
+static SWIG_CSharpGCHandleHelperCallback SWIG_csharp_gchandle_callback = NULL;
+%}
+
+%pragma(csharp) imclasscode=%{
+  protected class SWIGGCHandleHelper {
+
+    public delegate IntPtr SWIGGCHandleDelegate(IntPtr handlePtr, int mode);
+    static SWIGGCHandleDelegate gchandleDelegate = new SWIGGCHandleDelegate(UpdateGCHandle);
+
+    [DllImport("$dllimport", EntryPoint="SWIGRegisterGCHandleCallback_$module")]
+    public static extern void SWIGRegisterGCHandleCallback_$module(SWIGGCHandleDelegate gchandleDelegate);
+
+    #if __IOS__
+    [ObjCRuntime.MonoPInvokeCallback(typeof(SWIGGCHandleDelegate))]
+    #endif
+    static IntPtr UpdateGCHandle(IntPtr handlePtr, int mode) {
+      if (handlePtr == IntPtr.Zero) {
+        return IntPtr.Zero;
+      }
+
+      // Retrieve original object from the handle and release the handle
+      var handle = GCHandle.FromIntPtr(handlePtr);
+      var obj = handle.Target;
+      handle.Free();
+      if (obj == null || mode == 0) {
+        return IntPtr.Zero;
+      }
+
+      // If we take ownership, keep weak reference. Otherwise keep normal reference
+      var newHandle = GCHandle.Alloc(obj, mode == 1 ? GCHandleType.Weak : GCHandleType.Normal);
+      return GCHandle.ToIntPtr(newHandle);
+    }
+
+    static SWIGGCHandleHelper() {
+      SWIGRegisterGCHandleCallback_$module(gchandleDelegate);
+    }
+  }
+
+  static protected SWIGGCHandleHelper swigGCHandleHelper = new SWIGGCHandleHelper();
+%}
+
+%insert(runtime) %{
+#ifdef __cplusplus
+extern "C" 
+#endif
+SWIGEXPORT void SWIGSTDCALL SWIGRegisterGCHandleCallback_$module(SWIG_CSharpGCHandleHelperCallback callback) {
+  SWIG_csharp_gchandle_callback = callback;
+}
+%}
+#endif // SWIG_CSHARP_NO_GCHANDLE_HELPER
+
 #if !defined(SWIG_CSHARP_NO_IMCLASS_STATIC_CONSTRUCTOR)
 // Ensure the class is not marked beforefieldinit
 %pragma(csharp) imclasscode=%{

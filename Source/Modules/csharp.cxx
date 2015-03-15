@@ -1719,7 +1719,7 @@ public:
 	Printf(proxy_class_code, "    if (SwigDerivedClassHasMethod(\"%s\", swigMethodTypes%s))\n", method, methid);
 	Printf(proxy_class_code, "      swigDelegate%s = new SwigDelegate%s_%s(SwigDirector%s);\n", methid, proxy_class_name, methid, overname);
       }
-      Printf(proxy_class_code, "    swigSelfHandle = GCHandle.Alloc(this, GCHandleType.Normal);\n");
+      Printf(proxy_class_code, "    var swigSelfHandle = GCHandle.Alloc(this, GCHandleType.Weak);\n");
       String *director_connect_method_name = Swig_name_member(getNSpace(), proxy_class_name, "director_connect");
       Printf(proxy_class_code, "    %s.%s(swigCPtr, GCHandle.ToIntPtr(swigSelfHandle)", imclass_name, director_connect_method_name);
       for (i = first_class_dmethod; i < curr_class_dmethod; ++i) {
@@ -3421,6 +3421,9 @@ public:
     Printf(code_wrap->def, ") {\n");
     Printf(code_wrap->code, ");\n");
     Printf(imclass_class_code, ");\n");
+
+    Printf(code_wrap->code, "    director->swig_set_self(SWIG_csharp_gchandle_callback, callbackarg, false);");
+
     Printf(code_wrap->code, "  }\n");
     Printf(code_wrap->code, "}\n");
 
@@ -3823,7 +3826,7 @@ public:
       if (!is_void)
 	Printf(w->code, "jresult = (%s) ", c_ret_type);
 
-      Printf(w->code, "swig_callback%s(swig_callbackarg%s);\n", overloaded_name, jupcall_args);
+      Printf(w->code, "swig_callback%s(swig_get_self()%s);\n", overloaded_name, jupcall_args);
 
       if (!is_void) {
 	String *jresult_str = NewString("jresult");
@@ -4087,7 +4090,6 @@ public:
 
     Printf(w->def, "void %s::swig_connect_director(void *callbackarg", director_classname);
 
-    Printf(w->code, "swig_callbackarg = callbackarg;\n");
     for (i = first_class_dmethod; i < curr_class_dmethod; ++i) {
       UpcallData *udata = Getitem(dmethods_seq, i);
       String *methid = Getattr(udata, "class_methodidx");
@@ -4105,13 +4107,11 @@ public:
     if (Len(director_callbacks) > 0) {
       Printf(f_directors_h, "\nprivate:\n%s", director_callbacks);
     }
-    Printf(f_directors_h, "    void *swig_callbackarg;\n");
     Printf(f_directors_h, "    void swig_init_callbacks();\n");
     Printf(f_directors_h, "};\n\n");
     Printf(w->code, "}\n\n");
 
     Printf(w->code, "void %s::swig_init_callbacks() {\n", director_classname);
-    Printf(w->code, "  swig_callbackarg = 0;\n");
     for (i = first_class_dmethod; i < curr_class_dmethod; ++i) {
       UpcallData *udata = Getitem(dmethods_seq, i);
       String *overname = Getattr(udata, "overname");
@@ -4191,3 +4191,4 @@ C# Options (available with -csharp)\n\
                        of proxy classes\n\
      -oldvarnames    - Old intermediary method names for variable wrappers\n\
 \n";
+
