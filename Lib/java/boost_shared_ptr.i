@@ -146,14 +146,14 @@
 // Base proxy classes
 %typemap(javabody) TYPE %{
   private long swigCPtr;
-  private boolean swigCMemOwn;
+  protected boolean swigCMemOwn;
 
-  PTRCTOR_VISIBILITY $javaclassname(long cPtr, boolean cMemoryOwn) {
+  public $javaclassname(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  CPTR_VISIBILITY static long getCPtr($javaclassname obj) {
+  public static long getCPtr($javaclassname obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 %}
@@ -161,15 +161,13 @@
 // Derived proxy classes
 %typemap(javabody_derived) TYPE %{
   private long swigCPtr;
-  private boolean swigCMemOwnDerived;
 
-  PTRCTOR_VISIBILITY $javaclassname(long cPtr, boolean cMemoryOwn) {
-    super($imclassname.$javaclazznameSWIGSmartPtrUpcast(cPtr), true);
-    swigCMemOwnDerived = cMemoryOwn;
+  public $javaclassname(long cPtr, boolean cMemoryOwn) {
+    super($imclassname.$javaclazznameSWIGSmartPtrUpcast(cPtr), cMemoryOwn);
     swigCPtr = cPtr;
   }
 
-  CPTR_VISIBILITY static long getCPtr($javaclassname obj) {
+  public static long getCPtr($javaclassname obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 %}
@@ -186,8 +184,8 @@
 
 %typemap(javadestruct_derived, methodname="delete", methodmodifiers="public synchronized") TYPE {
     if (swigCPtr != 0) {
-      if (swigCMemOwnDerived) {
-        swigCMemOwnDerived = false;
+      if (swigCMemOwn) {
+        swigCMemOwn = false;
         $jnicall;
       }
       swigCPtr = 0;

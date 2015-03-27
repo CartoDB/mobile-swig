@@ -1124,12 +1124,12 @@ SWIGINTERN const char * SWIG_UnpackData(const char *c, void *ptr, size_t sz) {
   private long swigCPtr;
   protected boolean swigCMemOwn;
 
-  PTRCTOR_VISIBILITY $javaclassname(long cPtr, boolean cMemoryOwn) {
+  public $javaclassname(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  CPTR_VISIBILITY static long getCPtr($javaclassname obj) {
+  public static long getCPtr($javaclassname obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 %}
@@ -1138,12 +1138,12 @@ SWIGINTERN const char * SWIG_UnpackData(const char *c, void *ptr, size_t sz) {
 %typemap(javabody_derived) TYPE %{
   private long swigCPtr;
 
-  PTRCTOR_VISIBILITY $javaclassname(long cPtr, boolean cMemoryOwn) {
+  public $javaclassname(long cPtr, boolean cMemoryOwn) {
     super($imclassname.$javaclazznameSWIGUpcast(cPtr), cMemoryOwn);
     swigCPtr = cPtr;
   }
 
-  CPTR_VISIBILITY static long getCPtr($javaclassname obj) {
+  public static long getCPtr($javaclassname obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 %}
@@ -1154,7 +1154,7 @@ SWIGINTERN const char * SWIG_UnpackData(const char *c, void *ptr, size_t sz) {
 %typemap(javabody) TYPE *, TYPE &, TYPE [] %{
   private long swigCPtr;
 
-  PTRCTOR_VISIBILITY $javaclassname(long cPtr, boolean futureUse) {
+  public $javaclassname(long cPtr, boolean futureUse) {
     swigCPtr = cPtr;
   }
 
@@ -1162,7 +1162,7 @@ SWIGINTERN const char * SWIG_UnpackData(const char *c, void *ptr, size_t sz) {
     swigCPtr = 0;
   }
 
-  CPTR_VISIBILITY static long getCPtr($javaclassname obj) {
+  public static long getCPtr($javaclassname obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 %}

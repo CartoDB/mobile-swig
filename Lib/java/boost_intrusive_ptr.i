@@ -266,12 +266,12 @@
   private long swigCPtr;
   private boolean swigCMemOwnBase;
 
-  PTRCTOR_VISIBILITY $javaclassname(long cPtr, boolean cMemoryOwn) {
+  public $javaclassname(long cPtr, boolean cMemoryOwn) {
     swigCMemOwnBase = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  CPTR_VISIBILITY static long getCPtr($javaclassname obj) {
+  public static long getCPtr($javaclassname obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 %}
@@ -281,13 +281,13 @@
   private long swigCPtr;
   private boolean swigCMemOwnDerived;
 
-  PTRCTOR_VISIBILITY $javaclassname(long cPtr, boolean cMemoryOwn) {
+  public $javaclassname(long cPtr, boolean cMemoryOwn) {
     super($imclassname.$javaclazznameSWIGSmartPtrUpcast(cPtr), true);
     swigCMemOwnDerived = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  CPTR_VISIBILITY static long getCPtr($javaclassname obj) {
+  public static long getCPtr($javaclassname obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 %}
@@ -416,12 +416,12 @@
   private long swigCPtr;
   private boolean swigCMemOwnBase;
 
-  PTRCTOR_VISIBILITY $javaclassname(long cPtr, boolean cMemoryOwn) {
+  public $javaclassname(long cPtr, boolean cMemoryOwn) {
     swigCMemOwnBase = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  CPTR_VISIBILITY static long getCPtr($javaclassname obj) {
+  public static long getCPtr($javaclassname obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 %}
@@ -431,13 +431,13 @@
   private long swigCPtr;
   private boolean swigCMemOwnDerived;
 
-  PTRCTOR_VISIBILITY $javaclassname(long cPtr, boolean cMemoryOwn) {
+  public $javaclassname(long cPtr, boolean cMemoryOwn) {
     super($imclassname.$javaclazznameSWIGSmartPtrUpcast(cPtr), true);
     swigCMemOwnDerived = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  CPTR_VISIBILITY static long getCPtr($javaclassname obj) {
+  public static long getCPtr($javaclassname obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 %}

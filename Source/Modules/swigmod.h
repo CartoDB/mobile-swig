@@ -87,7 +87,7 @@ public:
   virtual int typesDirective(Node *n);
     
   /* Doxygen Comment */
-  virtual int doxygenComment(Node *n) {}
+  virtual int doxygenComment(Node *n) { return 0; }
 
   /* C/C++ parsing */
 
@@ -169,7 +169,7 @@ public:
   virtual int usingDeclaration(Node *n);
     
   /* C/C++ parsing */
-    virtual int doxygenComment(Node *n) {}
+  virtual int doxygenComment(Node *n) { return 0; }
 
   /* Function handlers */
 
