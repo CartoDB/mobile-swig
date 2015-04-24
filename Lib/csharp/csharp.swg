@@ -819,7 +819,7 @@ SWIGINTERN const char * SWIG_UnpackData(const char *c, void *ptr, size_t sz) {
 %typemap(csbase)                      SWIGTYPE, SWIGTYPE *, SWIGTYPE &, SWIGTYPE [], SWIGTYPE (CLASS::*) ""
 %typemap(csclassmodifiers)            SWIGTYPE, SWIGTYPE *, SWIGTYPE &, SWIGTYPE [], SWIGTYPE (CLASS::*) "public class"
 %typemap(cscode)                      SWIGTYPE, SWIGTYPE *, SWIGTYPE &, SWIGTYPE [], SWIGTYPE (CLASS::*) ""
-%typemap(csimports)                   SWIGTYPE, SWIGTYPE *, SWIGTYPE &, SWIGTYPE [], SWIGTYPE (CLASS::*) "\nusing System;\nusing System.Runtime.InteropServices;\n"
+%typemap(csimports)                   SWIGTYPE, SWIGTYPE *, SWIGTYPE &, SWIGTYPE [], SWIGTYPE (CLASS::*) "\nusing System;\nusing System.Runtime.InteropServices;\n#if WINDOWS_PHONE\nusing System.Reflection;\n#endif\n"
 %typemap(csinterfaces)                SWIGTYPE "IDisposable"
 %typemap(csinterfaces)                          SWIGTYPE *, SWIGTYPE &, SWIGTYPE [], SWIGTYPE (CLASS::*) ""
 %typemap(csinterfaces_derived)        SWIGTYPE, SWIGTYPE *, SWIGTYPE &, SWIGTYPE [], SWIGTYPE (CLASS::*) ""
@@ -955,11 +955,17 @@ SWIG_CSBODY_TYPEWRAPPER(internal, protected, internal, SWIGTYPE)
 %pragma(csharp) moduleimports=%{
 using System;
 using System.Runtime.InteropServices;
+#if WINDOWS_PHONE
+using System.Reflection;
+#endif
 %}
 
 %pragma(csharp) imclassimports=%{
 using System;
 using System.Runtime.InteropServices;
+#if WINDOWS_PHONE
+using System.Reflection;
+#endif
 %}
 
 /* Some ANSI C typemaps */

@@ -17,7 +17,7 @@ namespace Swig {
   class Director {
   public:
     enum { RELEASE_HANDLE = 0, WEAK_HANDLE = 1, STRONG_HANDLE = 2 };
-    typedef void* (*SWIG_gchandle_delegate)(void *, int);
+    typedef void* (SWIGSTDCALL *SWIG_gchandle_delegate)(void *, int);
 
     Director() : swig_self_(0), swig_gchandle_delegate_(0) {
     }
