@@ -15,6 +15,7 @@
 #include <limits.h>		// for INT_MAX
 #include "cparse.h"
 #include <ctype.h>
+#include "../DoxygenTranslator/src/JavaDocConverter.h"
 
 /* Hash type used for upcalls from C/C++ */
 typedef DOH UpcallData;
@@ -45,6 +46,8 @@ class CSHARP:public Language {
   bool global_variable_flag;	// Flag for when wrapping a global variable
   bool old_variable_names;	// Flag for old style variable names in the intermediary class
   bool generate_property_declaration_flag;	// Flag for generating properties
+  bool doxygen;			//flag for converting found doxygen to javadoc
+  bool comment_creation_chatter; //flag for getting information about where comments were created in java.cxx
 
   String *imclass_name;		// intermediary class name
   String *module_class_name;	// module class name
@@ -79,6 +82,7 @@ class CSHARP:public Language {
   String *director_method_types;	// Director method types
   String *director_connect_parms;	// Director delegates parameter list for director connect call
   String *destructor_call;	//C++ destructor call if any
+  String *structuralComments;
 
   // Director method stuff:
   List *dmethods_seq;
@@ -118,6 +122,8 @@ public:
       global_variable_flag(false),
       old_variable_names(false),
       generate_property_declaration_flag(false),
+      doxygen(false),
+      comment_creation_chatter(false),
       imclass_name(NULL),
       module_class_name(NULL),
       imclass_class_code(NULL),
@@ -151,6 +157,7 @@ public:
       director_method_types(NULL),
       director_connect_parms(NULL),
       destructor_call(NULL),
+      structuralComments(NULL),
       dmethods_seq(NULL),
       dmethods_table(NULL),
       n_dmethods(0),
@@ -162,6 +169,11 @@ public:
     director_multiple_inheritance = 0;
     director_language = 1;
   }
+
+   ~CSHARP() {
+       if (doxygen)
+           delete doxygenTranslator;
+   }
 
   /* -----------------------------------------------------------------------------
    * getProxyName()
@@ -204,6 +216,9 @@ public:
 
     SWIG_library_directory("csharp");
 
+    bool debug_doxygen_translator = false;
+    bool debug_doxygen_parser = false;
+
     // Look for certain command line options
     for (int i = 1; i < argc; i++) {
       if (argv[i]) {
@@ -237,11 +252,26 @@ public:
 	} else if (strcmp(argv[i], "-oldvarnames") == 0) {
 	  Swig_mark_arg(i);
 	  old_variable_names = true;
-	} else if (strcmp(argv[i], "-help") == 0) {
+    } else if ((strcmp(argv[i], "-doxygen") == 0)) {
+      Swig_mark_arg(i);
+      doxygen = true;
+      scan_doxygen_comments = true;
+    }
+    else if ((strcmp(argv[i], "-debug-doxygen-translator") == 0)) {
+      Swig_mark_arg(i);
+      debug_doxygen_translator = true;
+    }
+    else if ((strcmp(argv[i], "-debug-doxygen-parser") == 0)) {
+      Swig_mark_arg(i);
+      debug_doxygen_parser = true;
+    } else if (strcmp(argv[i], "-help") == 0) {
 	  Printf(stdout, "%s\n", usage);
 	}
       }
     }
+
+    if (doxygen)
+      doxygenTranslator = new JavaDocConverter(debug_doxygen_translator, debug_doxygen_parser);
 
     // Add a symbol to the parser for conditional compilation
     Preprocessor_define("SWIGCSHARP 1", 0);
@@ -428,10 +458,23 @@ public:
       // Start writing out the intermediary class file
       emitBanner(f_im);
 
+      //Add any structural comments to the top
+      if (doxygen && structuralComments) {
+          Printf(f_im, "%s", structuralComments);
+      }
+
       addOpenNamespace(0, f_im);
 
       if (imclass_imports)
 	Printf(f_im, "%s\n", imclass_imports);
+
+      if (doxygen && doxygenTranslator->hasDocumentation(n)) {
+        String *doxygen_comments = doxygenTranslator->getDocumentation(n);
+        if (comment_creation_chatter)
+          Printf(f_im, "/* This was generated from top() */");
+        Printv(f_im, Char(doxygen_comments), NIL);
+        Delete(doxygen_comments);
+      }
 
       if (Len(imclass_class_modifiers) > 0)
 	Printf(f_im, "%s ", imclass_class_modifiers);
@@ -1120,6 +1163,15 @@ public:
       EnumFeature enum_feature = decodeEnumFeature(n);
       String *typemap_lookup_type = Getattr(n, "name");
 
+      if (doxygen && doxygenTranslator->hasDocumentation(n)) {
+        String *doxygen_comments = doxygenTranslator->getDocumentation(n);
+        if (comment_creation_chatter) {
+          Printf(enum_code, "/* This was generated from enumvalueDeclaration() */");
+        }
+        Printv(enum_code, Char(doxygen_comments), NIL);
+        Delete(doxygen_comments);
+      }
+
       if ((enum_feature != SimpleEnum) && symname && typemap_lookup_type) {
 	// Wrap (non-anonymous) C/C++ enum within a typesafe, typeunsafe or proper C# enum
 
@@ -1149,7 +1201,18 @@ public:
 	       ", " : "", pure_interfaces, " {\n", NIL);
 	Delete(scope);
       } else {
-	// Wrap C++ enum with integers - just indicate start of enum with a comment, no comment for anonymous enums of any sort
+    //translate and write javadoc comment for the enum itself if flagged
+    if (doxygen && doxygenTranslator->hasDocumentation(n)) {
+      String *doxygen_comments = doxygenTranslator->getDocumentation(n);
+      if (comment_creation_chatter)
+        Printf(constants_code, "/* This was generated from enumDeclaration() */");
+      Printf(constants_code, "/* Comment for enum %s */\n", Getattr(n, "unnamedinstance") ? "" : symname);
+      Printf(constants_code, Char(doxygen_comments));
+      Printf(constants_code, "\n");
+      Delete(doxygen_comments);
+    }
+          
+      // Wrap C++ enum with integers - just indicate start of enum with a comment, no comment for anonymous enums of any sort
 	if (symname && !Getattr(n, "unnamedinstance"))
 	  Printf(constants_code, "  // %s \n", symname);
       }
@@ -1202,7 +1265,16 @@ public:
 	  Printv(f_enum, typemapLookup(n, "csimports", typemap_lookup_type, WARN_NONE), // Import statements
 		 "\n", enum_code, "\n", NIL);
 
-	  addCloseNamespace(nspace, f_enum);
+      //translate and write javadoc comment if flagged
+      if (doxygen && doxygenTranslator->hasDocumentation(n)) {
+        String *doxygen_comments = doxygenTranslator->getDocumentation(n);
+        if (comment_creation_chatter)
+          Printf(f_enum, "/* This was generated from enumDeclaration() */");
+        Printv(f_enum, Char(doxygen_comments), NIL);
+        Delete(doxygen_comments);
+      }
+      
+      addCloseNamespace(nspace, f_enum);
 	  Delete(f_enum);
 	  Delete(output_directory);
 	}
@@ -1288,6 +1360,15 @@ public:
       if (!addSymbol(name, n, scope))
 	return SWIG_ERROR;
 
+      //translate and write javadoc comment if flagged
+      if (doxygen && doxygenTranslator->hasDocumentation(n)) {
+        String *doxygen_comments = doxygenTranslator->getDocumentation(n);
+        if (comment_creation_chatter)
+          Printf(enum_code, "/* This was generated from enumvalueDeclaration() */");
+        Printv(enum_code, Char(doxygen_comments), NIL);
+        Delete(doxygen_comments);
+      }
+
       const String *csattributes = Getattr(n, "feature:cs:attributes");
 
       if ((enum_feature == ProperEnum) && parent_name && !unnamedinstance) {
@@ -1363,6 +1444,22 @@ public:
   }
 
   /* -----------------------------------------------------------------------
+  * doxygenComment()
+  * Simply translates the doxygen comment and places it into the appropriate
+  * file
+  * ------------------------------------------------------------------------ */
+  virtual int doxygenComment(Node *n) {
+    if (doxygen && doxygenTranslator->hasDocumentation(n)) {
+      String *doxygen_comments = doxygenTranslator->getDocumentation(n);
+      if (comment_creation_chatter)
+        Printf(structuralComments, "/* This was generated from doxygenComment() */");
+      Printv(structuralComments, Char(doxygen_comments), NIL);
+      Delete(doxygen_comments);
+    }
+    return SWIG_OK;
+  }
+
+  /* -----------------------------------------------------------------------
    * constantWrapper()
    * Used for wrapping constants - #define or %constant.
    * Also for inline initialised const static primitive type member variables (short, int, double, enums etc).
@@ -1382,6 +1479,15 @@ public:
     String *constants_code = NewString("");
     Swig_save("constantWrapper", n, "value", NIL);
     Swig_save("constantWrapper", n, "tmap:ctype:out", "tmap:imtype:out", "tmap:cstype:out", "tmap:out:null", "tmap:imtype:outattributes", "tmap:cstype:outattributes", NIL);
+
+    //translate and write javadoc comment if flagged
+    if (doxygen && doxygenTranslator->hasDocumentation(n)) {
+      String *doxygen_comments = doxygenTranslator->getDocumentation(n);
+      if (comment_creation_chatter)
+        Printf(constants_code, "/* This was generated from constantWrapper() */");
+      Printv(constants_code, Char(doxygen_comments), NIL);
+      Delete(doxygen_comments);
+    }
 
     bool is_enum_item = (Cmp(nodeType(n), "enumitem") == 0);
 
@@ -1650,6 +1756,15 @@ public:
     // Start writing the proxy class
     Printv(proxy_class_def, typemapLookup(n, "csimports", typemap_lookup_type, WARN_NONE),	// Import statements
 	   "\n", NIL);
+
+    //translate and write javadoc comment if flagged
+    if (doxygen && doxygenTranslator->hasDocumentation(n)) {
+      String *doxygen_comments = doxygenTranslator->getDocumentation(n);
+      if (comment_creation_chatter)
+        Printf(proxy_class_def, "/* This was generated from emitProxyClassDefAndCPPCasts() */");
+      Printv(proxy_class_def, Char(doxygen_comments), NIL);
+      Delete(doxygen_comments);
+    }
 
     // Class attributes
     const String *csattributes = typemapLookup(n, "csattributes", typemap_lookup_type, WARN_NONE);
@@ -2106,6 +2221,15 @@ public:
         Swig_typemap_attach_parms("csvarin", l, NULL);
     }
 
+    //translate and write javadoc comment if flagged
+    if (doxygen && doxygenTranslator->hasDocumentation(n)) {
+      String *doxygen_comments = doxygenTranslator->getDocumentation(n);
+      if (comment_creation_chatter)
+          Printf(function_code, "/* This was generated from proxyclassfunctionhandler() */");
+      Printv(function_code, Char(doxygen_comments), NIL);
+      Delete(doxygen_comments);
+    }
+
     /* Start generating the proxy function */
     const String *outattributes = Getattr(n, "tmap:cstype:outattributes");
     if (outattributes)
@@ -2419,6 +2543,15 @@ public:
 	tm = imtypeout;
       Printf(im_return_type, "%s", tm);
 
+      //translate and write javadoc comment if flagged
+      if (doxygen && doxygenTranslator->hasDocumentation(n)) {
+        String *doxygen_comments = doxygenTranslator->getDocumentation(n);
+        if (comment_creation_chatter)
+          Printf(function_code, "/* This was generated from constructionhandler() */");
+        Printv(function_code, Char(doxygen_comments), NIL);
+        Delete(doxygen_comments);
+      }
+
       Printf(function_code, "  %s %s(", methodmods, proxy_class_name);
       Printf(helper_code, "  static private %s SwigConstruct%s(", im_return_type, proxy_class_name);
 
@@ -2703,6 +2836,15 @@ public:
     String *post_code = NewString("");
     String *terminator_code = NewString("");
 
+    // translate and write javadoc comment if flagged
+    if (doxygen && doxygenTranslator->hasDocumentation(n)) {
+      String *doxygen_comments = doxygenTranslator->getDocumentation(n);
+      if (comment_creation_chatter)
+        Printf(function_code, "/* This was generated from moduleClassFunctionHandler() */");
+      Printv(function_code, doxygen_comments, NIL);
+      Delete(doxygen_comments);
+    }
+    
     if (l) {
       if (SwigType_type(Getattr(l, "type")) == T_VOID) {
 	l = nextSibling(l);
@@ -4191,10 +4333,13 @@ extern "C" Language *swig_csharp(void) {
 
 const char *CSHARP::usage = (char *) "\
 C# Options (available with -csharp)\n\
-     -dllimport <dl> - Override DllImport attribute name to <dl>\n\
-     -namespace <nm> - Generate wrappers into C# namespace <nm>\n\
-     -noproxy        - Generate the low-level functional interface instead\n\
-                       of proxy classes\n\
-     -oldvarnames    - Old intermediary method names for variable wrappers\n\
+     -doxygen                    - Convert C++ doxygen comments to comments in proxy classes\n\
+     -debug-doxygen-parser       - Display doxygen parser module debugging information\n\
+     -debug-doxygen-translator   - Display doxygen translator module debugging information\n\
+     -dllimport <dl>             - Override DllImport attribute name to <dl>\n\
+     -namespace <nm>             - Generate wrappers into C# namespace <nm>\n\
+     -noproxy                    - Generate the low-level functional interface instead\n\
+                                   of proxy classes\n\
+     -oldvarnames                - Old intermediary method names for variable wrappers\n\
 \n";
 
