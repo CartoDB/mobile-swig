@@ -910,7 +910,7 @@ int SWIG_main(int argc, char *argv[], Language *l) {
 #if defined(_WIN32)
     char buf[MAX_PATH];
     char *p;
-    if (!(GetModuleFileName(0, buf, MAX_PATH) == 0 || (p = strrchr(buf, '\\')) == 0)) {
+    if (!(GetModuleFileNameA(0, buf, MAX_PATH) == 0 || (p = strrchr(buf, '\\')) == 0)) {
       *(p + 1) = '\0';
       SwigLib = NewStringf("%sLib", buf); // Native windows installation path
     } else {

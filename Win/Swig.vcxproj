@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{264A16A9-CFBD-45C0-BD0B-D56FAA5C6334}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Swig</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>PCRE_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Source\Swig;..\Source\Include;..\Source\DOH;..\Source\CParse;..\Source\Preprocessor;..\Source\Modules;..\Win\pcre</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\Win\pcre\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>pcred.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Source\Swig;..\Source\Include;..\Source\DOH;..\Source\CParse;..\Source\Preprocessor;..\Source\Modules;..\Win\pcre</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>..\Win\pcre\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>pcred.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Source\CParse\cparse.h" />
+    <ClInclude Include="..\Source\CParse\parser.h" />
+    <ClInclude Include="..\Source\DOH\doh.h" />
+    <ClInclude Include="..\Source\DOH\dohint.h" />
+    <ClInclude Include="..\Source\DoxygenTranslator\src\DoxygenCommands.h" />
+    <ClInclude Include="..\Source\DoxygenTranslator\src\DoxygenEntity.h" />
+    <ClInclude Include="..\Source\DoxygenTranslator\src\DoxygenParser.h" />
+    <ClInclude Include="..\Source\DoxygenTranslator\src\DoxygenTranslator.h" />
+    <ClInclude Include="..\Source\DoxygenTranslator\src\JavaDocConverter.h" />
+    <ClInclude Include="..\Source\DoxygenTranslator\src\PyDocConverter.h" />
+    <ClInclude Include="..\Source\Modules\swigmod.h" />
+    <ClInclude Include="..\Source\Preprocessor\preprocessor.h" />
+    <ClInclude Include="..\Source\Swig\swig.h" />
+    <ClInclude Include="..\Source\Swig\swigfile.h" />
+    <ClInclude Include="..\Source\Swig\swigopt.h" />
+    <ClInclude Include="..\Source\Swig\swigparm.h" />
+    <ClInclude Include="..\Source\Swig\swigscan.h" />
+    <ClInclude Include="..\Source\Swig\swigtree.h" />
+    <ClInclude Include="..\Source\Swig\swigwrap.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Source\CParse\cscanner.c" />
+    <ClCompile Include="..\Source\CParse\parser.c" />
+    <ClCompile Include="..\Source\CParse\templ.c" />
+    <ClCompile Include="..\Source\CParse\util.c" />
+    <ClCompile Include="..\Source\DOH\base.c" />
+    <ClCompile Include="..\Source\DOH\file.c" />
+    <ClCompile Include="..\Source\DOH\fio.c" />
+    <ClCompile Include="..\Source\DOH\hash.c" />
+    <ClCompile Include="..\Source\DOH\list.c" />
+    <ClCompile Include="..\Source\DOH\memory.c" />
+    <ClCompile Include="..\Source\DOH\string.c" />
+    <ClCompile Include="..\Source\DOH\void.c" />
+    <ClCompile Include="..\Source\DoxygenTranslator\src\DoxygenEntity.cpp" />
+    <ClCompile Include="..\Source\DoxygenTranslator\src\DoxygenParser.cpp" />
+    <ClCompile Include="..\Source\DoxygenTranslator\src\DoxygenTranslator.cpp" />
+    <ClCompile Include="..\Source\DoxygenTranslator\src\JavaDocConverter.cpp" />
+    <ClCompile Include="..\Source\DoxygenTranslator\src\PyDocConverter.cpp" />
+    <ClCompile Include="..\Source\Modules\allegrocl.cxx" />
+    <ClCompile Include="..\Source\Modules\allocate.cxx" />
+    <ClCompile Include="..\Source\Modules\browser.cxx" />
+    <ClCompile Include="..\Source\Modules\cffi.cxx" />
+    <ClCompile Include="..\Source\Modules\chicken.cxx" />
+    <ClCompile Include="..\Source\Modules\clisp.cxx" />
+    <ClCompile Include="..\Source\Modules\contract.cxx" />
+    <ClCompile Include="..\Source\Modules\csharp.cxx" />
+    <ClCompile Include="..\Source\Modules\d.cxx" />
+    <ClCompile Include="..\Source\Modules\directors.cxx" />
+    <ClCompile Include="..\Source\Modules\emit.cxx" />
+    <ClCompile Include="..\Source\Modules\go.cxx" />
+    <ClCompile Include="..\Source\Modules\guile.cxx" />
+    <ClCompile Include="..\Source\Modules\java.cxx" />
+    <ClCompile Include="..\Source\Modules\lang.cxx" />
+    <ClCompile Include="..\Source\Modules\lua.cxx" />
+    <ClCompile Include="..\Source\Modules\main.cxx" />
+    <ClCompile Include="..\Source\Modules\modula3.cxx" />
+    <ClCompile Include="..\Source\Modules\module.cxx" />
+    <ClCompile Include="..\Source\Modules\mzscheme.cxx" />
+    <ClCompile Include="..\Source\Modules\ocaml.cxx" />
+    <ClCompile Include="..\Source\Modules\octave.cxx" />
+    <ClCompile Include="..\Source\Modules\overload.cxx" />
+    <ClCompile Include="..\Source\Modules\perl5.cxx" />
+    <ClCompile Include="..\Source\Modules\php.cxx" />
+    <ClCompile Include="..\Source\Modules\pike.cxx" />
+    <ClCompile Include="..\Source\Modules\python.cxx" />
+    <ClCompile Include="..\Source\Modules\r.cxx" />
+    <ClCompile Include="..\Source\Modules\ruby.cxx" />
+    <ClCompile Include="..\Source\Modules\s-exp.cxx" />
+    <ClCompile Include="..\Source\Modules\swigmain.cxx" />
+    <ClCompile Include="..\Source\Modules\tcl8.cxx" />
+    <ClCompile Include="..\Source\Modules\typepass.cxx" />
+    <ClCompile Include="..\Source\Modules\uffi.cxx" />
+    <ClCompile Include="..\Source\Modules\utils.cxx" />
+    <ClCompile Include="..\Source\Modules\xml.cxx" />
+    <ClCompile Include="..\Source\Preprocessor\cpp.c" />
+    <ClCompile Include="..\Source\Preprocessor\expr.c" />
+    <ClCompile Include="..\Source\Swig\cwrap.c" />
+    <ClCompile Include="..\Source\Swig\deprecate.c" />
+    <ClCompile Include="..\Source\Swig\error.c" />
+    <ClCompile Include="..\Source\Swig\fragment.c" />
+    <ClCompile Include="..\Source\Swig\getopt.c" />
+    <ClCompile Include="..\Source\Swig\include.c" />
+    <ClCompile Include="..\Source\Swig\misc.c" />
+    <ClCompile Include="..\Source\Swig\naming.c" />
+    <ClCompile Include="..\Source\Swig\parms.c" />
+    <ClCompile Include="..\Source\Swig\scanner.c" />
+    <ClCompile Include="..\Source\Swig\stype.c" />
+    <ClCompile Include="..\Source\Swig\symbol.c" />
+    <ClCompile Include="..\Source\Swig\tree.c" />
+    <ClCompile Include="..\Source\Swig\typemap.c" />
+    <ClCompile Include="..\Source\Swig\typeobj.c" />
+    <ClCompile Include="..\Source\Swig\typesys.c" />
+    <ClCompile Include="..\Source\Swig\wrapfunc.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Source\CParse\parser.y" />
+    <None Include="..\Source\Modules\README" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>
