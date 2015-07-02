@@ -15,7 +15,7 @@
 #include <limits.h>		// for INT_MAX
 #include "cparse.h"
 #include <ctype.h>
-#include "../DoxygenTranslator/src/JavaDocConverter.h"
+#include "../DoxygenTranslator/src/DocXMLConverter.h"
 
 /* Hash type used for upcalls from C/C++ */
 typedef DOH UpcallData;
@@ -46,8 +46,8 @@ class CSHARP:public Language {
   bool global_variable_flag;	// Flag for when wrapping a global variable
   bool old_variable_names;	// Flag for old style variable names in the intermediary class
   bool generate_property_declaration_flag;	// Flag for generating properties
-  bool doxygen;			//flag for converting found doxygen to javadoc
-  bool comment_creation_chatter; //flag for getting information about where comments were created in java.cxx
+  bool doxygen;			//flag for converting found doxygen to DocXML
+  bool comment_creation_chatter; //flag for getting information about where comments were created in csharp.cxx
 
   String *imclass_name;		// intermediary class name
   String *module_class_name;	// module class name
@@ -271,7 +271,7 @@ public:
     }
 
     if (doxygen)
-      doxygenTranslator = new JavaDocConverter(debug_doxygen_translator, debug_doxygen_parser);
+      doxygenTranslator = new DocXMLConverter(debug_doxygen_translator, debug_doxygen_parser);
 
     // Add a symbol to the parser for conditional compilation
     Preprocessor_define("SWIGCSHARP 1", 0);
@@ -1067,6 +1067,7 @@ public:
      * Not for enums and constants.
      */
     if (proxy_flag && wrapping_member_flag && !enum_constant_flag) {
+
       // Capitalize the first letter in the variable in the getter/setter function name
       bool getter_flag = Cmp(symname, Swig_name_set(getNSpace(), Swig_name_member(0, proxy_class_name, variable_name))) != 0;
 
@@ -1201,7 +1202,7 @@ public:
 	       ", " : "", pure_interfaces, " {\n", NIL);
 	Delete(scope);
       } else {
-    //translate and write javadoc comment for the enum itself if flagged
+    // Translate and write docXML comment for the enum itself if flagged
     if (doxygen && doxygenTranslator->hasDocumentation(n)) {
       String *doxygen_comments = doxygenTranslator->getDocumentation(n);
       if (comment_creation_chatter)
@@ -1265,7 +1266,7 @@ public:
 	  Printv(f_enum, typemapLookup(n, "csimports", typemap_lookup_type, WARN_NONE), // Import statements
 		 "\n", enum_code, "\n", NIL);
 
-      //translate and write javadoc comment if flagged
+      // Translate and write docXML comment for the enum itself if flagged
       if (doxygen && doxygenTranslator->hasDocumentation(n)) {
         String *doxygen_comments = doxygenTranslator->getDocumentation(n);
         if (comment_creation_chatter)
@@ -1360,7 +1361,7 @@ public:
       if (!addSymbol(name, n, scope))
 	return SWIG_ERROR;
 
-      //translate and write javadoc comment if flagged
+      // Translate and write docXML comment for the enum itself if flagged
       if (doxygen && doxygenTranslator->hasDocumentation(n)) {
         String *doxygen_comments = doxygenTranslator->getDocumentation(n);
         if (comment_creation_chatter)
@@ -1480,7 +1481,7 @@ public:
     Swig_save("constantWrapper", n, "value", NIL);
     Swig_save("constantWrapper", n, "tmap:ctype:out", "tmap:imtype:out", "tmap:cstype:out", "tmap:out:null", "tmap:imtype:outattributes", "tmap:cstype:outattributes", NIL);
 
-    //translate and write javadoc comment if flagged
+    // Translate and write docXML comment for the enum itself if flagged
     if (doxygen && doxygenTranslator->hasDocumentation(n)) {
       String *doxygen_comments = doxygenTranslator->getDocumentation(n);
       if (comment_creation_chatter)
@@ -1726,7 +1727,7 @@ public:
             String *proxyclassname = Getattr(n, "classtypeobj");
             String *baseclassname = Getattr(base.item, "name");
             Swig_warning(WARN_CSHARP_MULTIPLE_INHERITANCE, Getfile(n), Getline(n),
-                         "Warning for %s proxy: Base %s ignored. Multiple inheritance is not supported in Java.\n", SwigType_namestr(proxyclassname), SwigType_namestr(baseclassname));
+                "Warning for %s proxy: Base %s ignored. Multiple inheritance is not supported in C#.\n", SwigType_namestr(proxyclassname), SwigType_namestr(baseclassname));
             base = Next(base);
           }
         }
@@ -1757,7 +1758,7 @@ public:
     Printv(proxy_class_def, typemapLookup(n, "csimports", typemap_lookup_type, WARN_NONE),	// Import statements
 	   "\n", NIL);
 
-    //translate and write javadoc comment if flagged
+    // Translate and write docXML comment for the enum itself if flagged
     if (doxygen && doxygenTranslator->hasDocumentation(n)) {
       String *doxygen_comments = doxygenTranslator->getDocumentation(n);
       if (comment_creation_chatter)
@@ -2062,7 +2063,7 @@ public:
          good place to put this code, since Abstract Base Classes (ABCs) can and should have 
          downcasts, making the constructorHandler() a bad place (because ABCs don't get to
          have constructors emitted.) */
-      if (GetFlag(n, "feature:javadowncast")) {
+      if (GetFlag(n, "feature:csdowncast")) {
 	String *downcast_method = Swig_name_member(getNSpace(), proxy_class_name, "SWIGDowncast");
 	String *wname = Swig_name_wrapper(downcast_method);
 
@@ -2221,7 +2222,7 @@ public:
         Swig_typemap_attach_parms("csvarin", l, NULL);
     }
 
-    //translate and write javadoc comment if flagged
+    // Translate and write docXML comment for the enum itself if flagged
     if (doxygen && doxygenTranslator->hasDocumentation(n)) {
       String *doxygen_comments = doxygenTranslator->getDocumentation(n);
       if (comment_creation_chatter)
@@ -2452,7 +2453,8 @@ public:
 	const String *methodmods = Getattr(n, "feature:cs:methodmodifiers");
 	if (!methodmods)
 	  methodmods = (is_public(n) ? public_string : protected_string);
-	Printf(proxy_class_code, "  %s %s%s %s {", methodmods, static_flag ? "static " : "", variable_type, variable_name);
+
+    Printf(proxy_class_code, "  %s %s%s %s {", methodmods, static_flag ? "static " : "", variable_type, variable_name);
       }
       generate_property_declaration_flag = false;
 
@@ -2543,7 +2545,7 @@ public:
 	tm = imtypeout;
       Printf(im_return_type, "%s", tm);
 
-      //translate and write javadoc comment if flagged
+      // Translate and write docXML comment for the enum itself if flagged
       if (doxygen && doxygenTranslator->hasDocumentation(n)) {
         String *doxygen_comments = doxygenTranslator->getDocumentation(n);
         if (comment_creation_chatter)
@@ -2836,7 +2838,7 @@ public:
     String *post_code = NewString("");
     String *terminator_code = NewString("");
 
-    // translate and write javadoc comment if flagged
+    // Translate and write docXML comment for the enum itself if flagged
     if (doxygen && doxygenTranslator->hasDocumentation(n)) {
       String *doxygen_comments = doxygenTranslator->getDocumentation(n);
       if (comment_creation_chatter)
@@ -3455,7 +3457,7 @@ public:
   /* -----------------------------------------------------------------------------
    * outputDirectory()
    *
-   * Return the directory to use for generating Java classes/enums and create the
+   * Return the directory to use for generating C# classes/enums and create the
    * subdirectory (does not create if language specific outdir does not exist).
    * ----------------------------------------------------------------------------- */
 
@@ -3588,7 +3590,7 @@ public:
    * classDirectorMethod()
    *
    * Emit a virtual director method to pass a method call on to the 
-   * underlying Java object.
+   * underlying C# object.
    *
    * --------------------------------------------------------------- */
 
@@ -3749,7 +3751,7 @@ public:
     if (!ignored_method)
       Printf(w->code, "} else {\n");
 
-    /* Go through argument list, convert from native to Java */
+    /* Go through argument list, convert from native to C# */
     for (i = 0, p = l; p; ++i) {
       /* Is this superfluous? */
       while (checkAttribute(p, "tmap:directorin:numinputs", "0")) {

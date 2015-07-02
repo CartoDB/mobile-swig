@@ -93,6 +93,7 @@
     <ClInclude Include="..\Source\CParse\parser.h" />
     <ClInclude Include="..\Source\DOH\doh.h" />
     <ClInclude Include="..\Source\DOH\dohint.h" />
+    <ClInclude Include="..\Source\DoxygenTranslator\src\DocXMLConverter.h" />
     <ClInclude Include="..\Source\DoxygenTranslator\src\DoxygenCommands.h" />
     <ClInclude Include="..\Source\DoxygenTranslator\src\DoxygenEntity.h" />
     <ClInclude Include="..\Source\DoxygenTranslator\src\DoxygenParser.h" />
@@ -122,6 +123,7 @@
     <ClCompile Include="..\Source\DOH\memory.c" />
     <ClCompile Include="..\Source\DOH\string.c" />
     <ClCompile Include="..\Source\DOH\void.c" />
+    <ClCompile Include="..\Source\DoxygenTranslator\src\DocXMLConverter.cpp" />
     <ClCompile Include="..\Source\DoxygenTranslator\src\DoxygenEntity.cpp" />
     <ClCompile Include="..\Source\DoxygenTranslator\src\DoxygenParser.cpp" />
     <ClCompile Include="..\Source\DoxygenTranslator\src\DoxygenTranslator.cpp" />
