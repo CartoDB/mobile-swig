@@ -43,6 +43,7 @@ extern "C" {
   Language *swig_xml(void);
   Language *swig_chicken(void);
   Language *swig_csharp(void);
+  Language *swig_objectivec(void);
   Language *swig_allegrocl(void);
   Language *swig_lua(void);
   Language *swig_clisp(void);
@@ -69,6 +70,7 @@ static swig_module modules[] = {
   {"-clisp", swig_clisp, "CLISP"},
   {"-cffi", swig_cffi, "CFFI"},
   {"-csharp", swig_csharp, "C#"},
+  {"-objc", swig_objectivec, "Objective C"},
   {"-d", swig_d, "D"},
   {"-go", swig_go, "Go"},
   {"-guile", swig_guile, "Guile"},
