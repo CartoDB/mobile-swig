@@ -149,6 +149,7 @@
     <ClCompile Include="..\Source\Modules\modula3.cxx" />
     <ClCompile Include="..\Source\Modules\module.cxx" />
     <ClCompile Include="..\Source\Modules\mzscheme.cxx" />
+    <ClCompile Include="..\Source\Modules\objc.cxx" />
     <ClCompile Include="..\Source\Modules\ocaml.cxx" />
     <ClCompile Include="..\Source\Modules\octave.cxx" />
     <ClCompile Include="..\Source\Modules\overload.cxx" />
