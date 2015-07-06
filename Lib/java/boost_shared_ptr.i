@@ -62,12 +62,19 @@
    if (argp) $1 = *argp; %}
 %typemap(out) SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE >
 %{ *($&1_ltype*)&$result = $1 ? new $1_ltype($1) : 0; %}
+%typemap(directorin, descriptor="L$packagepath/$javaclassname;") SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE >
+%{ *($&1_ltype)&$input = new $1_ltype(*$1); %}
+%typemap(directorout) SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE > ($&1_ltype argp)
+%{ argp = *($&1_ltype*)&$input;
+   if (argp) { $result = *argp; } %}
 
 // shared_ptr by reference
 %typemap(in) SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE > & ($*1_ltype tempnull)
 %{ $1 = $input ? *($&1_ltype)&$input : &tempnull; %}
 %typemap(out) SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE > &
 %{ *($&1_ltype)&$result = *$1 ? new $*1_ltype(*$1) : 0; %} 
+%typemap(directorin, descriptor="L$packagepath/$*javaclassname;") SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE > &
+%{ *($&1_ltype)&$input = new $*1_ltype($1); %}
 
 // shared_ptr by pointer
 %typemap(in) SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE > * ($*1_ltype tempnull)
@@ -114,10 +121,20 @@
     long cPtr = $jnicall;
     return (cPtr == 0) ? null : new $typemap(jstype, TYPE)(cPtr, true);
   }
+%typemap(javadirectorin) SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE >
+  "new $typemap(jstype,TYPE)($jniinput, true)"
+%typemap(javadirectorout) SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE >
+  "$typemap(jstype,TYPE).getCPtr($javacall)"
+
 %typemap(javaout) SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE > & {
     long cPtr = $jnicall;
     return (cPtr == 0) ? null : new $typemap(jstype, TYPE)(cPtr, true);
   }
+%typemap(javadirectorin) SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE > &
+  "new $typemap(jstype,TYPE)($jniinput, true)"
+%typemap(javadirectorout) SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE > &
+  "$typemap(jstype,TYPE).getCPtr($javacall)"
+
 %typemap(javaout) SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE > * {
     long cPtr = $jnicall;
     return (cPtr == 0) ? null : new $typemap(jstype, TYPE)(cPtr, true);
