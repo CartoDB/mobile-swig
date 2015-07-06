@@ -117,23 +117,25 @@ am_eswig_OBJECTS = CParse/cscanner.$(OBJEXT) CParse/parser.$(OBJEXT) \
 	Modules/lang.$(OBJEXT) Modules/lua.$(OBJEXT) \
 	Modules/main.$(OBJEXT) Modules/modula3.$(OBJEXT) \
 	Modules/module.$(OBJEXT) Modules/mzscheme.$(OBJEXT) \
-	Modules/ocaml.$(OBJEXT) Modules/octave.$(OBJEXT) \
-	Modules/overload.$(OBJEXT) Modules/perl5.$(OBJEXT) \
-	Modules/php.$(OBJEXT) Modules/pike.$(OBJEXT) \
-	Modules/python.$(OBJEXT) Modules/r.$(OBJEXT) \
-	Modules/ruby.$(OBJEXT) Modules/s-exp.$(OBJEXT) \
-	Modules/swigmain.$(OBJEXT) Modules/tcl8.$(OBJEXT) \
-	Modules/typepass.$(OBJEXT) Modules/uffi.$(OBJEXT) \
-	Modules/utils.$(OBJEXT) Modules/xml.$(OBJEXT) \
-	Preprocessor/cpp.$(OBJEXT) Preprocessor/expr.$(OBJEXT) \
-	Swig/cwrap.$(OBJEXT) Swig/deprecate.$(OBJEXT) \
-	Swig/error.$(OBJEXT) Swig/fragment.$(OBJEXT) \
-	Swig/getopt.$(OBJEXT) Swig/include.$(OBJEXT) \
-	Swig/misc.$(OBJEXT) Swig/naming.$(OBJEXT) Swig/parms.$(OBJEXT) \
+	Modules/objc.$(OBJEXT) Modules/ocaml.$(OBJEXT) \
+	Modules/octave.$(OBJEXT) Modules/overload.$(OBJEXT) \
+	Modules/perl5.$(OBJEXT) Modules/php.$(OBJEXT) \
+	Modules/pike.$(OBJEXT) Modules/python.$(OBJEXT) \
+	Modules/r.$(OBJEXT) Modules/ruby.$(OBJEXT) \
+	Modules/s-exp.$(OBJEXT) Modules/swigmain.$(OBJEXT) \
+	Modules/tcl8.$(OBJEXT) Modules/typepass.$(OBJEXT) \
+	Modules/uffi.$(OBJEXT) Modules/utils.$(OBJEXT) \
+	Modules/xml.$(OBJEXT) Preprocessor/cpp.$(OBJEXT) \
+	Preprocessor/expr.$(OBJEXT) Swig/cwrap.$(OBJEXT) \
+	Swig/deprecate.$(OBJEXT) Swig/error.$(OBJEXT) \
+	Swig/fragment.$(OBJEXT) Swig/getopt.$(OBJEXT) \
+	Swig/include.$(OBJEXT) Swig/misc.$(OBJEXT) \
+	Swig/naming.$(OBJEXT) Swig/parms.$(OBJEXT) \
 	Swig/scanner.$(OBJEXT) Swig/stype.$(OBJEXT) \
 	Swig/symbol.$(OBJEXT) Swig/tree.$(OBJEXT) \
 	Swig/typeobj.$(OBJEXT) Swig/typemap.$(OBJEXT) \
 	Swig/typesys.$(OBJEXT) Swig/wrapfunc.$(OBJEXT) \
+	DoxygenTranslator/src/DocXMLConverter.$(OBJEXT) \
 	DoxygenTranslator/src/DoxygenEntity.$(OBJEXT) \
 	DoxygenTranslator/src/DoxygenParser.$(OBJEXT) \
 	DoxygenTranslator/src/DoxygenTranslator.$(OBJEXT) \
@@ -536,6 +538,7 @@ eswig_SOURCES = CParse/cscanner.c		\
 		Modules/modula3.cxx		\
 		Modules/module.cxx		\
 		Modules/mzscheme.cxx		\
+		Modules/objc.cxx		\
 		Modules/ocaml.cxx		\
 		Modules/octave.cxx		\
 		Modules/overload.cxx		\
@@ -571,6 +574,7 @@ eswig_SOURCES = CParse/cscanner.c		\
 		Swig/typemap.c			\
 		Swig/typesys.c			\
 		Swig/wrapfunc.c			\
+		DoxygenTranslator/src/DocXMLConverter.cpp\
 		DoxygenTranslator/src/DoxygenEntity.cpp\
 		DoxygenTranslator/src/DoxygenParser.cpp\
 		DoxygenTranslator/src/DoxygenTranslator.cpp\
@@ -745,6 +749,8 @@ Modules/module.$(OBJEXT): Modules/$(am__dirstamp) \
 	Modules/$(DEPDIR)/$(am__dirstamp)
 Modules/mzscheme.$(OBJEXT): Modules/$(am__dirstamp) \
 	Modules/$(DEPDIR)/$(am__dirstamp)
+Modules/objc.$(OBJEXT): Modules/$(am__dirstamp) \
+	Modules/$(DEPDIR)/$(am__dirstamp)
 Modules/ocaml.$(OBJEXT): Modules/$(am__dirstamp) \
 	Modules/$(DEPDIR)/$(am__dirstamp)
 Modules/octave.$(OBJEXT): Modules/$(am__dirstamp) \
@@ -833,6 +839,9 @@ DoxygenTranslator/src/$(am__dirstamp):
 DoxygenTranslator/src/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) DoxygenTranslator/src/$(DEPDIR)
 	@: > DoxygenTranslator/src/$(DEPDIR)/$(am__dirstamp)
+DoxygenTranslator/src/DocXMLConverter.$(OBJEXT):  \
+	DoxygenTranslator/src/$(am__dirstamp) \
+	DoxygenTranslator/src/$(DEPDIR)/$(am__dirstamp)
 DoxygenTranslator/src/DoxygenEntity.$(OBJEXT):  \
 	DoxygenTranslator/src/$(am__dirstamp) \
 	DoxygenTranslator/src/$(DEPDIR)/$(am__dirstamp)
@@ -877,6 +886,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@DOH/$(DEPDIR)/memory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DOH/$(DEPDIR)/string.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DOH/$(DEPDIR)/void.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@DoxygenTranslator/src/$(DEPDIR)/DocXMLConverter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DoxygenTranslator/src/$(DEPDIR)/DoxygenEntity.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DoxygenTranslator/src/$(DEPDIR)/DoxygenParser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DoxygenTranslator/src/$(DEPDIR)/DoxygenTranslator.Po@am__quote@
@@ -902,6 +912,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@Modules/$(DEPDIR)/modula3.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Modules/$(DEPDIR)/module.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Modules/$(DEPDIR)/mzscheme.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@Modules/$(DEPDIR)/objc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Modules/$(DEPDIR)/ocaml.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Modules/$(DEPDIR)/octave.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Modules/$(DEPDIR)/overload.Po@am__quote@

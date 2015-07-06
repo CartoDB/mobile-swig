@@ -275,5 +275,15 @@
 
 /* please leave 890-899 free for Go */
 
-/* -- User defined warnings (900 - 999) -- */
+%define SWIGWARN_OBJC_TYPEMAP_OBJCTYPE_UNDEF     900 %enddef
+%define SWIGWARN_OBJC_TYPEMAP_IMTYPE_UNDEF       901 %enddef
+%define SWIGWARN_OBJC_TYPEMAP_OBJCIN_UNDEF       902 %enddef
+%define SWIGWARN_OBJC_TYPEMAP_OBJCOUT_UNDEF      903 %enddef
+%define SWIGWARN_OBJC_MULTIPLE_INHERITANCE       904 %enddef
+%define SWIGWARN_OBJC_INTERFACE_MOD              905 %enddef
+%define SWIGWARN_OBJC_IMPLEMENTATION_MOD         906 %enddef
+
+/* please leave 900-919 free for ObjectiveC */
+
+/* -- User defined warnings (1000 - 999) -- */
 

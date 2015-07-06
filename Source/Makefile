@@ -76,8 +76,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = x86_64-apple-darwin14.1.0
-host_triplet = x86_64-apple-darwin14.1.0
+build_triplet = x86_64-apple-darwin14.4.0
+host_triplet = x86_64-apple-darwin14.4.0
 bin_PROGRAMS = eswig$(EXEEXT)
 subdir = Source
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
@@ -117,23 +117,25 @@ am_eswig_OBJECTS = CParse/cscanner.$(OBJEXT) CParse/parser.$(OBJEXT) \
 	Modules/lang.$(OBJEXT) Modules/lua.$(OBJEXT) \
 	Modules/main.$(OBJEXT) Modules/modula3.$(OBJEXT) \
 	Modules/module.$(OBJEXT) Modules/mzscheme.$(OBJEXT) \
-	Modules/ocaml.$(OBJEXT) Modules/octave.$(OBJEXT) \
-	Modules/overload.$(OBJEXT) Modules/perl5.$(OBJEXT) \
-	Modules/php.$(OBJEXT) Modules/pike.$(OBJEXT) \
-	Modules/python.$(OBJEXT) Modules/r.$(OBJEXT) \
-	Modules/ruby.$(OBJEXT) Modules/s-exp.$(OBJEXT) \
-	Modules/swigmain.$(OBJEXT) Modules/tcl8.$(OBJEXT) \
-	Modules/typepass.$(OBJEXT) Modules/uffi.$(OBJEXT) \
-	Modules/utils.$(OBJEXT) Modules/xml.$(OBJEXT) \
-	Preprocessor/cpp.$(OBJEXT) Preprocessor/expr.$(OBJEXT) \
-	Swig/cwrap.$(OBJEXT) Swig/deprecate.$(OBJEXT) \
-	Swig/error.$(OBJEXT) Swig/fragment.$(OBJEXT) \
-	Swig/getopt.$(OBJEXT) Swig/include.$(OBJEXT) \
-	Swig/misc.$(OBJEXT) Swig/naming.$(OBJEXT) Swig/parms.$(OBJEXT) \
+	Modules/objc.$(OBJEXT) Modules/ocaml.$(OBJEXT) \
+	Modules/octave.$(OBJEXT) Modules/overload.$(OBJEXT) \
+	Modules/perl5.$(OBJEXT) Modules/php.$(OBJEXT) \
+	Modules/pike.$(OBJEXT) Modules/python.$(OBJEXT) \
+	Modules/r.$(OBJEXT) Modules/ruby.$(OBJEXT) \
+	Modules/s-exp.$(OBJEXT) Modules/swigmain.$(OBJEXT) \
+	Modules/tcl8.$(OBJEXT) Modules/typepass.$(OBJEXT) \
+	Modules/uffi.$(OBJEXT) Modules/utils.$(OBJEXT) \
+	Modules/xml.$(OBJEXT) Preprocessor/cpp.$(OBJEXT) \
+	Preprocessor/expr.$(OBJEXT) Swig/cwrap.$(OBJEXT) \
+	Swig/deprecate.$(OBJEXT) Swig/error.$(OBJEXT) \
+	Swig/fragment.$(OBJEXT) Swig/getopt.$(OBJEXT) \
+	Swig/include.$(OBJEXT) Swig/misc.$(OBJEXT) \
+	Swig/naming.$(OBJEXT) Swig/parms.$(OBJEXT) \
 	Swig/scanner.$(OBJEXT) Swig/stype.$(OBJEXT) \
 	Swig/symbol.$(OBJEXT) Swig/tree.$(OBJEXT) \
 	Swig/typeobj.$(OBJEXT) Swig/typemap.$(OBJEXT) \
 	Swig/typesys.$(OBJEXT) Swig/wrapfunc.$(OBJEXT) \
+	DoxygenTranslator/src/DocXMLConverter.$(OBJEXT) \
 	DoxygenTranslator/src/DoxygenEntity.$(OBJEXT) \
 	DoxygenTranslator/src/DoxygenParser.$(OBJEXT) \
 	DoxygenTranslator/src/DoxygenTranslator.$(OBJEXT) \
@@ -215,7 +217,7 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /Users/mark/projects/Nutiteq/swigcsharp/Tools/config/missing aclocal-1.14
+ACLOCAL = ${SHELL} /Users/mark/swig-2.0.11-nutiteq/Tools/config/missing aclocal-1.14
 ADB = adb
 ALLEGROCLBIN = 
 AMTAR = $${TAR-tar}
@@ -223,9 +225,9 @@ AM_DEFAULT_VERBOSITY = 1
 ANDROID = 
 ANT = 
 AR = ar
-AUTOCONF = ${SHELL} /Users/mark/projects/Nutiteq/swigcsharp/Tools/config/missing autoconf
-AUTOHEADER = ${SHELL} /Users/mark/projects/Nutiteq/swigcsharp/Tools/config/missing autoheader
-AUTOMAKE = ${SHELL} /Users/mark/projects/Nutiteq/swigcsharp/Tools/config/missing automake-1.14
+AUTOCONF = ${SHELL} /Users/mark/swig-2.0.11-nutiteq/Tools/config/missing autoconf
+AUTOHEADER = ${SHELL} /Users/mark/swig-2.0.11-nutiteq/Tools/config/missing autoheader
+AUTOMAKE = ${SHELL} /Users/mark/swig-2.0.11-nutiteq/Tools/config/missing automake-1.14
 AWK = awk
 BOOST_CPPFLAGS = -I/include/boost-0
 BOOST_LDFLAGS = -L/lib64
@@ -245,7 +247,7 @@ CPPFLAGS =  -I/usr/local/include
 CSHARPCFLAGS = 
 CSHARPCILINTERPRETER = mono
 CSHARPCILINTERPRETER_FLAGS = --debug
-CSHARPCOMPILER = gmcs
+CSHARPCOMPILER = mcs
 CSHARPCYGPATH_W = echo
 CSHARPDYNAMICLINKING = 
 CSHARPLIBRARYPREFIX = lib
@@ -311,7 +313,7 @@ LUADYNAMICLINKING =
 LUAFLAGS = 
 LUALINK =  -llualib
 LUA_SO = .so
-MAKEINFO = ${SHELL} /Users/mark/projects/Nutiteq/swigcsharp/Tools/config/missing makeinfo
+MAKEINFO = ${SHELL} /Users/mark/swig-2.0.11-nutiteq/Tools/config/missing makeinfo
 MKDIR_P = ../Tools/config/install-sh -c -d
 MZC = 
 MZDYNOBJ = 
@@ -374,7 +376,7 @@ PYTHONDYNAMICLINKING =
 PYTHON_SO = .so
 RANLIB = ranlib
 RBIN = 
-ROOT_DIR = /Users/mark/projects/Nutiteq/swigcsharp
+ROOT_DIR = /Users/mark/swig-2.0.11-nutiteq
 RPATH = 
 RUBY = ruby
 RUBYCCDLFLAGS = 
@@ -431,10 +433,10 @@ YACC = bison -y
 YFLAGS = 
 YODL2HTML = 
 YODL2MAN = 
-abs_builddir = /Users/mark/projects/Nutiteq/swigcsharp/Source
-abs_srcdir = /Users/mark/projects/Nutiteq/swigcsharp/Source
-abs_top_builddir = /Users/mark/projects/Nutiteq/swigcsharp
-abs_top_srcdir = /Users/mark/projects/Nutiteq/swigcsharp
+abs_builddir = /Users/mark/swig-2.0.11-nutiteq/Source
+abs_srcdir = /Users/mark/swig-2.0.11-nutiteq/Source
+abs_top_builddir = /Users/mark/swig-2.0.11-nutiteq
+abs_top_srcdir = /Users/mark/swig-2.0.11-nutiteq
 ac_aux_dir = Tools/config
 ac_ct_CC = gcc
 ac_ct_CXX = g++
@@ -444,10 +446,10 @@ am__quote =
 am__tar = $${TAR-tar} chof - "$$tardir"
 am__untar = $${TAR-tar} xf -
 bindir = ${exec_prefix}/bin
-build = x86_64-apple-darwin14.1.0
+build = x86_64-apple-darwin14.4.0
 build_alias = 
 build_cpu = x86_64
-build_os = darwin14.1.0
+build_os = darwin14.4.0
 build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
@@ -455,15 +457,15 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = x86_64-apple-darwin14.1.0
+host = x86_64-apple-darwin14.4.0
 host_alias = 
 host_cpu = x86_64
-host_os = darwin14.1.0
+host_os = darwin14.4.0
 host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /Users/mark/projects/Nutiteq/swigcsharp/Tools/config/install-sh
+install_sh = ${SHELL} /Users/mark/swig-2.0.11-nutiteq/Tools/config/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -536,6 +538,7 @@ eswig_SOURCES = CParse/cscanner.c		\
 		Modules/modula3.cxx		\
 		Modules/module.cxx		\
 		Modules/mzscheme.cxx		\
+		Modules/objc.cxx		\
 		Modules/ocaml.cxx		\
 		Modules/octave.cxx		\
 		Modules/overload.cxx		\
@@ -571,6 +574,7 @@ eswig_SOURCES = CParse/cscanner.c		\
 		Swig/typemap.c			\
 		Swig/typesys.c			\
 		Swig/wrapfunc.c			\
+		DoxygenTranslator/src/DocXMLConverter.cpp\
 		DoxygenTranslator/src/DoxygenEntity.cpp\
 		DoxygenTranslator/src/DoxygenParser.cpp\
 		DoxygenTranslator/src/DoxygenTranslator.cpp\
@@ -745,6 +749,8 @@ Modules/module.$(OBJEXT): Modules/$(am__dirstamp) \
 	Modules/$(DEPDIR)/$(am__dirstamp)
 Modules/mzscheme.$(OBJEXT): Modules/$(am__dirstamp) \
 	Modules/$(DEPDIR)/$(am__dirstamp)
+Modules/objc.$(OBJEXT): Modules/$(am__dirstamp) \
+	Modules/$(DEPDIR)/$(am__dirstamp)
 Modules/ocaml.$(OBJEXT): Modules/$(am__dirstamp) \
 	Modules/$(DEPDIR)/$(am__dirstamp)
 Modules/octave.$(OBJEXT): Modules/$(am__dirstamp) \
@@ -833,6 +839,9 @@ DoxygenTranslator/src/$(am__dirstamp):
 DoxygenTranslator/src/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) DoxygenTranslator/src/$(DEPDIR)
 	@: > DoxygenTranslator/src/$(DEPDIR)/$(am__dirstamp)
+DoxygenTranslator/src/DocXMLConverter.$(OBJEXT):  \
+	DoxygenTranslator/src/$(am__dirstamp) \
+	DoxygenTranslator/src/$(DEPDIR)/$(am__dirstamp)
 DoxygenTranslator/src/DoxygenEntity.$(OBJEXT):  \
 	DoxygenTranslator/src/$(am__dirstamp) \
 	DoxygenTranslator/src/$(DEPDIR)/$(am__dirstamp)
@@ -877,6 +886,7 @@ include DOH/$(DEPDIR)/list.Po
 include DOH/$(DEPDIR)/memory.Po
 include DOH/$(DEPDIR)/string.Po
 include DOH/$(DEPDIR)/void.Po
+include DoxygenTranslator/src/$(DEPDIR)/DocXMLConverter.Po
 include DoxygenTranslator/src/$(DEPDIR)/DoxygenEntity.Po
 include DoxygenTranslator/src/$(DEPDIR)/DoxygenParser.Po
 include DoxygenTranslator/src/$(DEPDIR)/DoxygenTranslator.Po
@@ -902,6 +912,7 @@ include Modules/$(DEPDIR)/main.Po
 include Modules/$(DEPDIR)/modula3.Po
 include Modules/$(DEPDIR)/module.Po
 include Modules/$(DEPDIR)/mzscheme.Po
+include Modules/$(DEPDIR)/objc.Po
 include Modules/$(DEPDIR)/ocaml.Po
 include Modules/$(DEPDIR)/octave.Po
 include Modules/$(DEPDIR)/overload.Po

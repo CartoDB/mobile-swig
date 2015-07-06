@@ -55,6 +55,7 @@ eswig_SOURCES =	CParse/cscanner.c		\
 		Modules/modula3.cxx		\
 		Modules/module.cxx		\
 		Modules/mzscheme.cxx		\
+		Modules/objc.cxx		\
 		Modules/ocaml.cxx		\
 		Modules/octave.cxx		\
 		Modules/overload.cxx		\
@@ -90,6 +91,7 @@ eswig_SOURCES =	CParse/cscanner.c		\
 		Swig/typemap.c			\
 		Swig/typesys.c			\
 		Swig/wrapfunc.c			\
+		DoxygenTranslator/src/DocXMLConverter.cpp\
 		DoxygenTranslator/src/DoxygenEntity.cpp\
 		DoxygenTranslator/src/DoxygenParser.cpp\
 		DoxygenTranslator/src/DoxygenTranslator.cpp\
