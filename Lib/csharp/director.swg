@@ -7,25 +7,19 @@
 
 #ifdef __cplusplus
 
-#include "components/Director.h"
-#include "utils/Log.h"
-
 #if defined(DEBUG_DIRECTOR_OWNED)
 #include <iostream>
 #endif
 #include <string>
 
-#include <mutex>
-#include <atomic>
-
 namespace Swig {
   /* Director base class */
-  class Director : public Nuti::Director {
+  class Director {
   public:
     enum { RELEASE_HANDLE = 0, WEAK_HANDLE = 1, STRONG_HANDLE = 2 };
     typedef void* (SWIGSTDCALL *SWIG_gchandle_delegate)(void *, int);
 
-    Director() : swig_self_(0), swig_gchandle_delegate_(0), swig_refcounter_(0), swig_director_mutex_() {
+    Director() : swig_self_(0), swig_gchandle_delegate_(0) {
     }
 
     virtual ~Director() {
@@ -55,30 +49,6 @@ namespace Swig {
       }
     }
 
-    // Nutiteq-specific methods
-
-    virtual void retainDirector() {
-      int counter = swig_refcounter_.fetch_add(1);
-      if (counter == 0) {
-        std::lock_guard<std::recursive_mutex> lock(swig_director_mutex_);
-        swig_csharp_change_ownership(swig_self_, false);
-      }
-    }
- 
-    virtual void releaseDirector() {
-      int counter = swig_refcounter_.fetch_sub(1) - 1;
-      if (counter == 0) {
-        std::lock_guard<std::recursive_mutex> lock(swig_director_mutex_);
-        swig_csharp_change_ownership(swig_self_, false);
-      } else if (counter < 0) {
-        Nuti::Log::Errorf("Director::release: Reference counter = %d!", counter);
-      }
-    }
-
-    virtual void* getDirectorObject() const {
-      return swig_get_self();
-    }
-
   protected:
     void swig_disconnect_director_self() {
       if (swig_gchandle_delegate_) {
@@ -90,10 +60,6 @@ namespace Swig {
   private:
     void* swig_self_;
     SWIG_gchandle_delegate swig_gchandle_delegate_;
-
-    /* Ref counter */
-    std::atomic<int> swig_refcounter_;
-    mutable std::recursive_mutex swig_director_mutex_;
   };
 
   /* Base class for director exceptions */

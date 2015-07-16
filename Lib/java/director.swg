@@ -7,14 +7,9 @@
 
 #ifdef __cplusplus
 
-#include "components/Director.h"
-#include "utils/Log.h"
-
 #if defined(DEBUG_DIRECTOR_OWNED)
 #include <iostream>
 #endif
-#include <mutex>
-#include <atomic>
 
 namespace Swig {
   /* Java object wrapper */
@@ -105,12 +100,9 @@ namespace Swig {
   };
 
   /* director base class */
-  class Director : public Nuti::Director {
+  class Director {
     /* pointer to Java virtual machine */
     JavaVM *swig_jvm_;
-    /* Ref counter */
-    std::atomic<int> swig_refcounter_;
-    mutable std::recursive_mutex swig_director_mutex_;
 
   protected:
 #if defined (_MSC_VER) && (_MSC_VER<1300)
@@ -175,7 +167,7 @@ namespace Swig {
     }
 
   public:
-    Director(JNIEnv *jenv) : swig_jvm_((JavaVM *) NULL), swig_refcounter_(0), swig_director_mutex_(), swig_self_() {
+    Director(JNIEnv *jenv) : swig_jvm_((JavaVM *) NULL), swig_self_() {
       /* Acquire the Java VM pointer */
       jenv->GetJavaVM(&swig_jvm_);
     }
@@ -199,36 +191,6 @@ namespace Swig {
       swig_self_.java_change_ownership(jenv, jself, take_or_release);
     }
 
-    // Nutiteq-specific methods
-
-    virtual void retainDirector() {
-      int counter = swig_refcounter_.fetch_add(1);
-      if (counter == 0) {
-        std::lock_guard<std::recursive_mutex> lock(swig_director_mutex_);
-        JNIEnvWrapper jnienv(this);
-        jobject jself = jnienv.getJNIEnv()->NewLocalRef(swig_self_.peek());
-        swig_java_change_ownership(jnienv.getJNIEnv(), jself, false);
-        jnienv.getJNIEnv()->DeleteLocalRef(jself);
-      }
-    }
-
-    virtual void releaseDirector() {
-      int counter = swig_refcounter_.fetch_sub(1) - 1;
-      if (counter == 0) {
-        std::lock_guard<std::recursive_mutex> lock(swig_director_mutex_);
-        JNIEnvWrapper jnienv(this);
-        jobject jself = jnienv.getJNIEnv()->NewLocalRef(swig_self_.peek());
-        swig_java_change_ownership(jnienv.getJNIEnv(), jself, true);
-        jnienv.getJNIEnv()->DeleteLocalRef(jself);
-      } else if (counter < 0) {
-        Nuti::Log::Errorf("Director::release: Reference counter = %d!", counter);
-      }
-    }
-
-    void* getDirectorObject() const {
-      JNIEnvWrapper jnienv(this) ;
-      return swig_get_self(jnienv.getJNIEnv());
-    }
   };
 }
 
