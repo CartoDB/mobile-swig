@@ -1,10 +1,19 @@
 // Users can provide their own SWIG_INTRUSIVE_PTR_TYPEMAPS or SWIG_INTRUSIVE_PTR_TYPEMAPS_NO_WRAP macros before including this file to change the
 // visibility of the constructor and getCPtr method if desired to public if using multiple modules.
 #ifndef SWIG_INTRUSIVE_PTR_TYPEMAPS
+#ifdef WINDOWS_PHONE
+#define SWIG_INTRUSIVE_PTR_TYPEMAPS(CONST, TYPE...) SWIG_INTRUSIVE_PTR_TYPEMAPS_IMPLEMENTATION(public, internal, CONST, TYPE)
+#else
 #define SWIG_INTRUSIVE_PTR_TYPEMAPS(CONST, TYPE...) SWIG_INTRUSIVE_PTR_TYPEMAPS_IMPLEMENTATION(internal, internal, CONST, TYPE)
 #endif
+#endif
+
 #ifndef SWIG_INTRUSIVE_PTR_TYPEMAPS_NO_WRAP
+#ifdef WINDOWS_PHONE
+#define SWIG_INTRUSIVE_PTR_TYPEMAPS_NO_WRAP(CONST, TYPE...) SWIG_INTRUSIVE_PTR_TYPEMAPS_NO_WRAP_IMPLEMENTATION(public, internal, CONST, TYPE)
+#else
 #define SWIG_INTRUSIVE_PTR_TYPEMAPS_NO_WRAP(CONST, TYPE...) SWIG_INTRUSIVE_PTR_TYPEMAPS_NO_WRAP_IMPLEMENTATION(internal, internal, CONST, TYPE)
+#endif
 #endif
 
 %include <intrusive_ptr.i>

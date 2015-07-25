@@ -894,8 +894,13 @@ SWIGINTERN const char * SWIG_UnpackData(const char *c, void *ptr, size_t sz) {
 
 /* Set the default csbody typemaps to use internal visibility.
    Use the macros to change to public if using multiple modules. */
+#ifdef WINDOWS_PHONE
+SWIG_CSBODY_PROXY(public, internal, SWIGTYPE)
+SWIG_CSBODY_TYPEWRAPPER(public, protected, internal, SWIGTYPE)
+#else
 SWIG_CSBODY_PROXY(internal, internal, SWIGTYPE)
 SWIG_CSBODY_TYPEWRAPPER(internal, protected, internal, SWIGTYPE)
+#endif
 
 %typemap(csfinalize) SWIGTYPE %{
   ~$csclassname() {
