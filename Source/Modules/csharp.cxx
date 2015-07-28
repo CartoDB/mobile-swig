@@ -1361,15 +1361,6 @@ public:
       if (!addSymbol(name, n, scope))
 	return SWIG_ERROR;
 
-      // Translate and write docXML comment for the enum itself if flagged
-      if (doxygen && doxygenTranslator->hasDocumentation(n)) {
-        String *doxygen_comments = doxygenTranslator->getDocumentation(n);
-        if (comment_creation_chatter)
-          Printf(enum_code, "/* This was generated from enumvalueDeclaration() */");
-        Printv(enum_code, Char(doxygen_comments), NIL);
-        Delete(doxygen_comments);
-      }
-
       const String *csattributes = Getattr(n, "feature:cs:attributes");
 
       if ((enum_feature == ProperEnum) && parent_name && !unnamedinstance) {
@@ -1378,7 +1369,16 @@ public:
 	if (!GetFlag(n, "firstenumitem"))
 	  Printf(enum_code, ",\n");
 
-	if (csattributes)
+    // Translate and write docXML comment for the enum itself if flagged
+    if (doxygen && doxygenTranslator->hasDocumentation(n)) {
+        String *doxygen_comments = doxygenTranslator->getDocumentation(n);
+        if (comment_creation_chatter)
+            Printf(enum_code, "/* This was generated from enumvalueDeclaration() */");
+        Printv(enum_code, Char(doxygen_comments), NIL);
+        Delete(doxygen_comments);
+    }
+
+    if (csattributes)
 	  Printf(enum_code, "  %s\n", csattributes);
 
 	Printf(enum_code, "  %s", symname);
@@ -2454,6 +2454,13 @@ public:
 	if (!methodmods)
 	  methodmods = (is_public(n) ? public_string : protected_string);
 
+    if (doxygen && doxygenTranslator->hasDocumentation(n)) {
+        String *doxygen_comments = doxygenTranslator->getDocumentation(n);
+        if (comment_creation_chatter)
+            Printf(proxy_class_code, "/* This was generated from proxyClassFunctionHandler() */");
+        Printv(proxy_class_code, Char(doxygen_comments), NIL);
+        Delete(doxygen_comments);
+    }
     Printf(proxy_class_code, "  %s %s%s %s {", methodmods, static_flag ? "static " : "", variable_type, variable_name);
       }
       generate_property_declaration_flag = false;

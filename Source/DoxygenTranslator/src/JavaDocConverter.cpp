@@ -144,6 +144,7 @@ void JavaDocConverter::fillStaticTables()
   tagHandlers["image"] = make_pair(&JavaDocConverter::handleTagImage, "");
   tagHandlers["link"] = make_pair(&JavaDocConverter::handleTagLink, "");
   tagHandlers["see"] = make_pair(&JavaDocConverter::handleTagSee, "");
+  tagHandlers["copydoc"] = make_pair(&JavaDocConverter::handleTagCopyDoc, "");
   tagHandlers["sa"] = make_pair(&JavaDocConverter::handleTagSee, "");
   tagHandlers["note"] = make_pair(&JavaDocConverter::handleTagMessage,
       "Note: ");
@@ -789,6 +790,53 @@ void JavaDocConverter::handleTagSee(DoxygenEntity& tag,
     linkObject = methodRef;
   }
   translatedComment += linkObject;
+}
+
+void JavaDocConverter::handleTagCopyDoc(DoxygenEntity& tag,
+    std::string& translatedComment,
+    std::string&)
+{
+    std::string dummy;
+    if (!tag.entityList.size())
+        return;
+
+    String *id = NewString(tag.entityList.front().data.c_str());
+
+    Node *parent = Getattr(currentNode, "parentNode");
+    if (!parent)
+        return;
+    parent = Getattr(parent, "parentNode");
+    if (!parent)
+        return;
+    for (Node *c = firstChild(parent); c; c = nextSibling(c)) {
+        String *name = Getattr(c, "name");
+        if (!name)
+            continue;
+        if (Equal(name, id) && Getattr(c, "doxygen")) {
+            std::string doxygen = Char(Getattr(c, "doxygen"));
+
+            DoxygenEntityList entityList = parser.createTree(doxygen.c_str(), doxygen.c_str(), 1);
+
+            DoxygenEntity root("root", entityList);
+
+            shiftEndlinesUpTree(root);
+
+            // strip non-description sections at the beginning
+            while (!root.entityList.empty()
+                && root.entityList.begin()->typeOfEntity != "partofdescription") {
+                root.entityList.pop_front();
+            }
+
+            // and at the end
+            while (!root.entityList.empty()
+                && root.entityList.rbegin()->typeOfEntity != "partofdescription") {
+                root.entityList.pop_back();
+            }
+
+            translatedComment += translateSubtree(root);
+            return;
+        }
+    }
 }
 
 /* This function moves all endlines at the end of child entities

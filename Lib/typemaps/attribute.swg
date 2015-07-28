@@ -145,6 +145,9 @@
     %ignore Class::SetMethod;
   #endif
   %extend Class {
+    /**
+     * @copydoc GetMethod
+     */
     AttributeType AttributeName;
   }
 #if defined(__cplusplus) && defined(SWIG_ATTRIBUTE_TEMPLATE)
@@ -172,6 +175,9 @@
   %ignore Class::GetMethod() const;
   %immutable Class::AttributeName;
   %extend Class {
+    /**
+     * @copydoc GetMethod
+     */
     AttributeType AttributeName;
   }
 #if defined(__cplusplus) && defined(SWIG_ATTRIBUTE_TEMPLATE)
@@ -253,6 +259,9 @@
   %ignore Class::GetMethod() const;
   %newobject Class::AttributeName;
   %extend Class {
+    /**
+     * @copydoc GetMethod
+     */
     AttributeType AttributeName;
   }
 %enddef
@@ -277,6 +286,9 @@
   %newobject Class::AttributeName;
   %typemap(newfree) const AttributeType &AttributeName "delete $1;// my newfree override"
   %extend Class {
+    /**
+     * @copydoc GetMethod
+     */
     AttributeType AttributeName;
   }
 %enddef

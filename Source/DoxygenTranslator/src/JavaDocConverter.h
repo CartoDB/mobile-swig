@@ -145,6 +145,10 @@ protected:
    * (like converting types of params, etc)
    */
   void handleTagSee(DoxygenEntity &tag, std::string &translatedComment, std::string &arg);
+  /*
+  * Internal extension, handle @copydoc command
+  */
+  void handleTagCopyDoc(DoxygenEntity &tag, std::string &translatedComment, std::string &arg);
 
 
 private:
