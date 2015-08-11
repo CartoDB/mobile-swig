@@ -1853,7 +1853,7 @@ public:
 	Printf(proxy_class_code, "    #if WINDOWS_PHONE\n");
 	Printf(proxy_class_code,
 	       "    System.Reflection.MethodInfo methodInfo = this.GetType().GetRuntimeMethod(methodName, methodTypes);\n");
-	Printf(proxy_class_code, "    bool hasDerivedMethod = methodInfo.DeclaringType.GetTypeInfo().IsSubclassOf(typeof(%s));\n", proxy_class_name);
+	Printf(proxy_class_code, "    bool hasDerivedMethod = methodInfo != null ? methodInfo.DeclaringType.GetTypeInfo().IsSubclassOf(typeof(%s)) : false;\n", proxy_class_name);
 	Printf(proxy_class_code, "    #else\n");
 	Printf(proxy_class_code,
 	       "    System.Reflection.MethodInfo methodInfo = this.GetType().GetMethod(methodName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance, null, methodTypes, null);\n");
