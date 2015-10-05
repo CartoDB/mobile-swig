@@ -1456,20 +1456,21 @@ public:
       if (!addSymbol(name, n, scope))
 	return SWIG_ERROR;
         
-    //translate and write javadoc comment if flagged
-    if (doxygen && doxygenTranslator->hasDocumentation(n)){
-      String *doxygen_comments=doxygenTranslator->getDocumentation(n);
-      if(comment_creation_chatter)
-        Printf(enum_code, "/* This was generated from enumvalueDeclaration() */");
-      Printv(enum_code, Char(doxygen_comments), NIL);
-      Delete(doxygen_comments);
-    }
-
       if ((enum_feature == ProperEnum) && parent_name && !unnamedinstance) {
 	// Wrap (non-anonymous) C/C++ enum with a proper Java enum
 	// Emit the enum item.
 	if (!GetFlag(n, "firstenumitem"))
 	  Printf(enum_code, ",\n");
+
+        //translate and write javadoc comment if flagged
+        if (doxygen && doxygenTranslator->hasDocumentation(n)){
+          String *doxygen_comments=doxygenTranslator->getDocumentation(n);
+          if (comment_creation_chatter)
+            Printf(enum_code, "/* This was generated from enumvalueDeclaration() */");
+          Printv(enum_code, Char(doxygen_comments), NIL);
+          Delete(doxygen_comments);
+        }
+
 	Printf(enum_code, "  %s", symname);
 	if (Getattr(n, "enumvalue")) {
 	  String *value = enumValue(n);
@@ -1486,6 +1487,15 @@ public:
 	substituteClassname(typemap_lookup_type, return_type);
         const String *methodmods = Getattr(n, "feature:java:methodmodifiers");
         methodmods = methodmods ? methodmods : (is_public(n) ? public_string : protected_string);
+
+        //translate and write javadoc comment if flagged
+        if (doxygen && doxygenTranslator->hasDocumentation(n)){
+          String *doxygen_comments=doxygenTranslator->getDocumentation(n);
+          if (comment_creation_chatter)
+            Printf(enum_code, "/* This was generated from enumvalueDeclaration() */");
+          Printv(enum_code, Char(doxygen_comments), NIL);
+          Delete(doxygen_comments);
+        }
 
 	if ((enum_feature == TypesafeEnum) && parent_name && !unnamedinstance) {
 	  // Wrap (non-anonymous) enum using the typesafe enum pattern
