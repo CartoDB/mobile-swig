@@ -1266,16 +1266,7 @@ public:
 	  Printv(f_enum, typemapLookup(n, "csimports", typemap_lookup_type, WARN_NONE), // Import statements
 		 "\n", enum_code, "\n", NIL);
 
-      // Translate and write docXML comment for the enum itself if flagged
-      if (doxygen && doxygenTranslator->hasDocumentation(n)) {
-        String *doxygen_comments = doxygenTranslator->getDocumentation(n);
-        if (comment_creation_chatter)
-          Printf(f_enum, "/* This was generated from enumDeclaration() */");
-        Printv(f_enum, Char(doxygen_comments), NIL);
-        Delete(doxygen_comments);
-      }
-      
-      addCloseNamespace(nspace, f_enum);
+          addCloseNamespace(nspace, f_enum);
 	  Delete(f_enum);
 	  Delete(output_directory);
 	}
