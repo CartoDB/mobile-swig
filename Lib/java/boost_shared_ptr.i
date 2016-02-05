@@ -180,7 +180,7 @@
   private long swigCPtr;
 
   PTRCTOR_VISIBILITY $javaclassname(long cPtr, boolean cMemoryOwn) {
-    super($imclassname.$javaclazznameSWIGSmartPtrUpcast(cPtr), cMemoryOwn);
+    super(cPtr, cMemoryOwn);
     swigCPtr = cPtr;
   }
 
