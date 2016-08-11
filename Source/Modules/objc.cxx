@@ -267,7 +267,7 @@ void OBJECTIVEC::main(int argc, char *argv[]) {
     
     // Use java doc translator for now
     if (doxygen)
-        doxygenTranslator = new JavaDocConverter(debug_doxygen_translator, debug_doxygen_parser);
+        doxygenTranslator = new JavaDocConverter("objc", debug_doxygen_translator, debug_doxygen_parser);
     
     // Set language-specific preprocessing symbol
     Preprocessor_define("SWIGOBJECTIVEC 1", 0);

@@ -22,7 +22,7 @@
  */
 class JavaDocConverter : public DoxygenTranslator {
 public:
-  JavaDocConverter(bool debugTranslator = false, bool debugParser = false);
+  JavaDocConverter(std::string lang, bool debugTranslator = false, bool debugParser = false);
   String *makeDocumentation(Node *node);
 
 protected:
@@ -131,6 +131,10 @@ protected:
    */
   void handleTagParam(DoxygenEntity &tag, std::string &translatedComment, std::string &arg);
   /*
+   * Insert \@throws command
+   */
+  void handleTagThrows(DoxygenEntity &tag, std::string &translatedComment, std::string &arg);
+  /*
    * Writes link for \ref tag. 
    */
   void handleTagRef(DoxygenEntity& tag, std::string& translatedComment,
@@ -153,6 +157,7 @@ protected:
 
 private:
   Node *currentNode;
+  std::string targetLanguage;
   // this contains the handler pointer and one string argument
   static std::map<std::string, std::pair<tagHandler, std::string> > tagHandlers;
   void fillStaticTables();

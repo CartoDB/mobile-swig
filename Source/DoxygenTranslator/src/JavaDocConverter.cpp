@@ -121,8 +121,8 @@ void JavaDocConverter::fillStaticTables()
   //tagHandlers["see"] = make_pair(&JavaDocConverter::handleTagSame, "");
   //tagHandlers["sa"] = make_pair(&JavaDocConverter::handleTagSame, "see");
   tagHandlers["since"] = make_pair(&JavaDocConverter::handleTagSame, "");
-  tagHandlers["throws"] = make_pair(&JavaDocConverter::handleTagSame, "");
-  tagHandlers["throw"] = make_pair(&JavaDocConverter::handleTagSame, "throws");
+  tagHandlers["throws"] = make_pair(&JavaDocConverter::handleTagThrows, "");
+  tagHandlers["throw"] = make_pair(&JavaDocConverter::handleTagThrows, "throws");
   tagHandlers["version"] = make_pair(&JavaDocConverter::handleTagSame, "");
   // these commands have special handlers
   tagHandlers["code"] = make_pair(&JavaDocConverter::handleTagExtended, "code");
@@ -275,8 +275,8 @@ void JavaDocConverter::fillStaticTables()
       "&rarr");
 }
 
-JavaDocConverter::JavaDocConverter(bool debugTranslator, bool debugParser) :
-    DoxygenTranslator(debugTranslator, debugParser)
+JavaDocConverter::JavaDocConverter(std::string lang, bool debugTranslator, bool debugParser) :
+    DoxygenTranslator(debugTranslator, debugParser), targetLanguage(lang)
 {
   fillStaticTables();
 }
@@ -609,6 +609,36 @@ void JavaDocConverter::handleTagParam(DoxygenEntity& tag,
   translatedComment += tag.entityList.begin()->data;
   tag.entityList.pop_front();
   handleParagraph(tag, translatedComment, dummy);
+}
+
+void JavaDocConverter::handleTagThrows(DoxygenEntity& tag,
+    std::string& translatedComment,
+    std::string&)
+{
+    std::string dummy;
+
+    if (!tag.entityList.size())
+        return;
+
+    std::string originalType = tag.entityList.begin()->data;
+    std::string translatedType;
+    if (targetLanguage == "java") {
+        translatedType = "java.lang.Exception";
+        if (originalType == "std::invalid_argument")
+            translatedType = "java.lang.IllegalArgumentException";
+        else if (originalType == "std::out_of_range")
+            translatedType = "java.lang.IndexOutOfBoundsException";
+    }
+    else if (targetLanguage == "objc") {
+        translatedType = "NSException";
+    }
+    else {
+        return;
+    }
+
+    translatedComment += "@throws " + translatedType;
+    tag.entityList.pop_front();
+    handleParagraph(tag, translatedComment, dummy);
 }
 
 

@@ -217,20 +217,20 @@ SWIGINTERN const char * SWIG_UnpackData(const char *c, void *ptr, size_t sz) {
                         double
   "$cscall"
 
-%typemap(out) bool               %{ $result = $1; %}
-%typemap(out) char               %{ $result = $1; %}
-%typemap(out) signed char        %{ $result = $1; %}
-%typemap(out) unsigned char      %{ $result = $1; %}
-%typemap(out) short              %{ $result = $1; %}
-%typemap(out) unsigned short     %{ $result = $1; %}
-%typemap(out) int                %{ $result = $1; %}
-%typemap(out) unsigned int       %{ $result = $1; %}
-%typemap(out) long               %{ $result = $1; %}
+%typemap(out) bool               %{ $result = (bool)$1; %}
+%typemap(out) char               %{ $result = (char)$1; %}
+%typemap(out) signed char        %{ $result = (signed char)$1; %}
+%typemap(out) unsigned char      %{ $result = (unsigned char)$1; %}
+%typemap(out) short              %{ $result = (short)$1; %}
+%typemap(out) unsigned short     %{ $result = (unsigned short)$1; %}
+%typemap(out) int                %{ $result = (int)$1; %}
+%typemap(out) unsigned int       %{ $result = (unsigned int)$1; %}
+%typemap(out) long               %{ $result = (long)$1; %}
 %typemap(out) unsigned long      %{ $result = (unsigned long)$1; %}
-%typemap(out) long long          %{ $result = $1; %}
-%typemap(out) unsigned long long %{ $result = $1; %}
-%typemap(out) float              %{ $result = $1; %}
-%typemap(out) double             %{ $result = $1; %}
+%typemap(out) long long          %{ $result = (long long)$1; %}
+%typemap(out) unsigned long long %{ $result = (unsigned long long)$1; %}
+%typemap(out) float              %{ $result = (float)$1; %}
+%typemap(out) double             %{ $result = (double)$1; %}
 
 /* char * - treat as String */
 %typemap(in) char * %{ $1 = ($1_ltype)$input; %}

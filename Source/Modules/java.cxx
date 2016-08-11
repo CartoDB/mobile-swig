@@ -309,7 +309,7 @@ public:
     }
       
     if (doxygen)
-      doxygenTranslator = new JavaDocConverter(debug_doxygen_translator, debug_doxygen_parser);
+      doxygenTranslator = new JavaDocConverter("java", debug_doxygen_translator, debug_doxygen_parser);
 
     // Add a symbol to the parser for conditional compilation
     Preprocessor_define("SWIGJAVA 1", 0);
@@ -3863,16 +3863,6 @@ public:
     Swig_typemap_attach_parms("directorargout", l, w);
 
     if (!ignored_method) {
-      /* Add Java environment pointer to wrapper */
-      String *jenvstr = NewString("jenv");
-      String *jobjstr = NewString("swigjobj");
-
-      Wrapper_add_localv(w, "swigjnienv", "JNIEnvWrapper", "swigjnienv(this)", NIL, NIL);
-      Wrapper_add_localv(w, jenvstr, "JNIEnv *", jenvstr, "= swigjnienv.getJNIEnv()", NIL);
-      Wrapper_add_localv(w, jobjstr, "jobject", jobjstr, "= (jobject) NULL", NIL);
-      Delete(jenvstr);
-      Delete(jobjstr);
-
       /* Preamble code */
       Printf(w->code, "if (!swig_override[%d]) {\n", classmeth_off);
     }
@@ -3901,7 +3891,13 @@ public:
 
     if (!ignored_method) {
       Printf(w->code, "}\n");
-      Printf(w->code, "swigjobj = swig_get_self(jenv);\n");
+    }
+
+    if (!ignored_method) {
+      /* Add Java environment pointer to wrapper */
+      Printf(w->code, "JNIEnvWrapper swigjnienv(this);\n");
+      Printf(w->code, "JNIEnv *jenv = swigjnienv.getJNIEnv();\n");
+      Printf(w->code, "jobject swigjobj = swig_get_self(jenv);\n");
       Printf(w->code, "if (swigjobj && jenv->IsSameObject(swigjobj, NULL) == JNI_FALSE) {\n");
     }
 

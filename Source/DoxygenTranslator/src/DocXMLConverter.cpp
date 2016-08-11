@@ -121,8 +121,8 @@ void DocXMLConverter::fillStaticTables()
     //tagHandlers["see"] = make_pair(&DocXMLConverter::handleTagSame, "");
     //tagHandlers["sa"] = make_pair(&DocXMLConverter::handleTagSame, "see");
     tagHandlers["since"] = make_pair(&DocXMLConverter::handleTagSame, "");
-    tagHandlers["throws"] = make_pair(&DocXMLConverter::handleTagSame, "");
-    tagHandlers["throw"] = make_pair(&DocXMLConverter::handleTagSame, "throws");
+    tagHandlers["throws"] = make_pair(&DocXMLConverter::handleTagThrows, "");
+    tagHandlers["throw"] = make_pair(&DocXMLConverter::handleTagThrows, "throws");
     tagHandlers["version"] = make_pair(&DocXMLConverter::handleTagSame, "");
     // these commands have special handlers
     tagHandlers["code"] = make_pair(&DocXMLConverter::handleTagExtended, "code");
@@ -616,6 +616,28 @@ void DocXMLConverter::handleTagParam(DoxygenEntity& tag,
     tag.entityList.pop_front();
     handleParagraph(tag, translatedComment, dummy);
     translatedComment += "</param>";
+}
+
+void DocXMLConverter::handleTagThrows(DoxygenEntity& tag,
+    std::string& translatedComment,
+    std::string&)
+{
+    std::string dummy;
+
+    if (!tag.entityList.size())
+        return;
+
+    std::string originalType = tag.entityList.begin()->data;
+    std::string translatedType = "System.SystemException";
+    if (originalType == "std::invalid_argument")
+        translatedType = "System.ArgumentException";
+    else if (originalType == "std::out_of_range")
+        translatedType = "System.ArgumentOutOfRangeException";
+
+    translatedComment += "<exception cref=\"" + translatedType + "\">";
+    tag.entityList.pop_front();
+    handleParagraph(tag, translatedComment, dummy);
+    translatedComment += "</exception>";
 }
 
 void DocXMLConverter::handleTagReturn(DoxygenEntity& tag,

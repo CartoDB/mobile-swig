@@ -131,6 +131,10 @@ protected:
     */
     void handleTagParam(DoxygenEntity &tag, std::string &translatedComment, std::string &arg);
     /*
+    * Insert \@throws command
+    */
+    void handleTagThrows(DoxygenEntity &tag, std::string &translatedComment, std::string &arg);
+    /*
     * Insert \@return command
     */
     void handleTagReturn(DoxygenEntity &tag, std::string &translatedComment, std::string &arg);
