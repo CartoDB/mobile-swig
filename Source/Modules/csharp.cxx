@@ -3700,7 +3700,7 @@ public:
 
       Printf(callback_def, "  private static %s SwigDirector%s(", tm, overloaded_name);
       if (!ignored_method)
-	Printf(director_delegate_definitions, "  public delegate %s", tm);
+	Printf(director_delegate_definitions, "  internal delegate %s", tm);
     } else {
       Swig_warning(WARN_CSHARP_TYPEMAP_CSTYPE_UNDEF, input_file, line_number, "No imtype typemap defined for %s\n", SwigType_str(returntype, 0));
     }
