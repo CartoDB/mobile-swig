@@ -464,7 +464,9 @@ void JavaDocConverter::handleNewLine(DoxygenEntity&,
   // This way we get to many empty lines in javadoc output, but this
   // is still better than joined lines. Possibility for improvements
   // exists.
-  translatedComment += "<br>\n * ";
+  if (targetLanguage != "objc")
+    translatedComment += "<br>";
+  translatedComment += "\n * ";
 }
 
 void JavaDocConverter::handleTagChar(DoxygenEntity& tag,
