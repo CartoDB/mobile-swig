@@ -1106,7 +1106,12 @@ String *Swig_string_strip(String *s) {
 
 
 #ifdef HAVE_PCRE
+
+#ifdef _WIN32
+#include "pcre.h"
+#else
 #include <pcre.h>
+#endif
 
 static int split_regex_pattern_subst(String *s, String **pattern, String **subst, const char **input)
 {
