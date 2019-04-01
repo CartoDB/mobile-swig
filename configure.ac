@@ -105,7 +105,7 @@ AS_IF([test "x$with_pcre" != xno],
 
 
 dnl CCache
-AC_ARG_ENABLE([ccache], AS_HELP_STRING([--disable-ccache], [disable building and installation of ccache-swig executable (default enabled)]), [enable_ccache=$enableval], [enable_ccache=yes])
+AC_ARG_ENABLE([ccache], AS_HELP_STRING([--disable-ccache], [disable building and installation of ccache-swig executable (default disabled)]), [enable_ccache=$enableval], [enable_ccache=no])
 AC_MSG_CHECKING([whether to enable ccache-swig])
 AC_MSG_RESULT([$enable_ccache])
 
