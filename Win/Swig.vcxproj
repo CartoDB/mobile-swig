@@ -141,6 +141,7 @@
     <ClCompile Include="..\Source\Modules\d.cxx" />
     <ClCompile Include="..\Source\Modules\directors.cxx" />
     <ClCompile Include="..\Source\Modules\emit.cxx" />
+    <ClCompile Include="..\Source\Modules\emscripten.cxx" />
     <ClCompile Include="..\Source\Modules\go.cxx" />
     <ClCompile Include="..\Source\Modules\guile.cxx" />
     <ClCompile Include="..\Source\Modules\java.cxx" />

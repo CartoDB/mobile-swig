@@ -52,6 +52,7 @@ extern "C" {
   Language *swig_r(void);
   Language *swig_go(void);
   Language *swig_d(void);
+  Language *swig_emscripten(void);
 }
 
 struct swig_module {
@@ -94,6 +95,7 @@ static swig_module modules[] = {
   {"-tcl8", swig_tcl, 0},
   {"-uffi", swig_uffi, "Common Lisp / UFFI"},
   {"-xml", swig_xml, "XML"},
+  {"-emscripten", swig_emscripten, "Emscripten"},
   {NULL, NULL, NULL}
 };
 
