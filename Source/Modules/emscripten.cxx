@@ -96,7 +96,13 @@ int EMSCRIPTEN::classHandler(Node *n) {
     Printf(f_cxx_wrapper, "EMSCRIPTEN_BINDINGS(%s) {\n  emscripten::register_%s(\"%s\");\n}\n\n", name, params, name);
   } else {
     if (isListener) {
-      Printf(f_cxx_wrapper, "struct %sWrapper : public emscripten::wrapper<%s> {\n  EMSCRIPTEN_WRAPPER(%sWrapper);\n", name, nsname, name);
+      String *className = NewString(name);
+      String *listenerHeader = NewString("");
+      String *listenerBody = NewString("");
+      String *listenerCall = NewString("");
+      Printf(listenerHeader, "#include <emscripten/threading.h>\n#include <emscripten/proxying.h>\n\ntypedef union em_variant_val { int i; int64_t i64; float f; double d; void *vp; char *cp; } em_variant_val;\n#define EM_QUEUED_CALL_MAX_ARGS 11\ntypedef struct em_queued_call { int functionEnum; void *functionPtr; _Atomic uint32_t operationDone; em_variant_val args[EM_QUEUED_JS_CALL_MAX_ARGS]; em_variant_val returnValue; void *satelliteData; int calleeDelete; } em_queued_call;\n");
+      Printf(listenerHeader, "\nclass EmRunOnMainThread {\npublic:\n");
+      Printf(listenerCall, "struct %sWrapper : public emscripten::wrapper<%s> {\n  EMSCRIPTEN_WRAPPER(%sWrapper);\n", name, nsname, name);
       
       for (Node *c = firstChild(n); c; c = nextSibling(c)) {
         String *returnType = Getattr(c, "type");
@@ -107,6 +113,8 @@ int EMSCRIPTEN::classHandler(Node *n) {
         if (returnType) {
           String *params = NewString("");
           String *variables = NewString("");
+          String *variables2 = NewString("");
+          String *variables3 = NewString("");
           ParmList *pl = Getattr(c, "parms");
           int argnum = 0;
           for (Parm *p = pl; p; p = nextSibling(p), argnum++) {
@@ -116,10 +124,13 @@ int EMSCRIPTEN::classHandler(Node *n) {
             Replace(pType, "(", "", DOH_REPLACE_ANY);
             Replace(pType, ")", "", DOH_REPLACE_ANY);
             String *pTypeAll = NewString("");
+            String *pTypeAll2 = NewString("");
             if (Len(pTypeSplit) > 1 && Strcmp(Getitem(pTypeSplit, Len(pTypeSplit) - 2), "q(const)") == 0) {
               Printf(pTypeAll, "const %s& %s", pType, pName);
+              Printf(pTypeAll2, "const %s", pType);
             } else {
               Printf(pTypeAll, "%s %s", pType, pName);
+              Printf(pTypeAll2, "%s", pType);
             }
 
             if (argnum == 0) {
@@ -128,14 +139,32 @@ int EMSCRIPTEN::classHandler(Node *n) {
               Printf(params, ", %s", pTypeAll);
             }
             Printf(variables, ", %s", pName);
+            Printf(variables2, "    call.args[%d].vp = (void *)&%s;\n", argnum + 1, pName);
+            Printf(variables3, "    %s %s = *((%s*) q->args[%d].vp);\n", pTypeAll2, pName, pTypeAll2, argnum + 1);
             // Printf(f_cxx_wrapper, "%s\n", p);
           }
 
-          Printf(f_cxx_wrapper, "  %s %s(%s) { return call<%s>(\"%s\"%s); }\n", returnType, name, params, returnType, name, variables);
+          String *returnBody = NewString("");
+          String *returnCall = NewString("");
+          String *returnCallEnd = NewString("");
+          Printf(listenerHeader, "  static void %s (void* arg);\n", name);
+          if (Strcmp(returnType, "void") != 0) {
+            Printf(listenerHeader, "  struct Return%s {\n    Return%s(%s value) {\n      this->value = std::move(value);\n    }\n    %s value;\n  };\n  struct Return%sContainer {\n    std::shared_ptr<Return%s> value;\n  };\n", name, name, returnType, returnType, name, name );
+            Printf(returnBody, "    Return%sContainer r = *((Return%sContainer*) q->returnValue.vp);\n    r.value = std::shared_ptr<Return%s>(new Return%s(self->call<%s>(\"%s\"%s)));\n", name, name, name, name, returnType, name, variables);
+            Printf(returnCall, "    EmRunOnMainThread::Return%sContainer r;\n    call.returnValue.vp = (void *)&r;\n", name);
+            Printf(returnCallEnd, "    return r.value->value;\n");
+          } else {
+            Printf(returnBody, "    self->call<void>(\"%s\"%s);\n", name, variables);
+          }
+          // Printf(listenerCall, "  %s %s(%s) { return call<%s>(\"%s\"%s); }\n", returnType, name, params, returnType, name, variables);
+          Printf(listenerCall, "  %s %s(%s) {\n    em_queued_call call = {EM_FUNC_SIG_V};\n%s\n    call.args[0].vp = (void *)this;\n%s\n    if (pthread_equal(emscripten_main_browser_thread_id(), pthread_self())) {\n      EmRunOnMainThread::%s(&call);\n    } else {\n      emscripten_proxy_async(emscripten_proxy_get_system_queue(), emscripten_main_browser_thread_id(), EmRunOnMainThread::%s, &call);\n      emscripten_wait_for_call_v(&call, INFINITY);\n    }\n%s  }\n\n", returnType, name, params, returnCall, variables2, name, name, returnCallEnd);
+          Printf(listenerBody, "void EmRunOnMainThread::%s (void* arg) {\n    em_queued_call* q = (em_queued_call*)arg;\n    %sWrapper* self = (%sWrapper*) q->args[0].vp;\n%s\n%s    q->operationDone = 1;\n    emscripten_futex_wake(&q->operationDone, INT_MAX);\n}\n", name, className, className, variables3, returnBody);
         }
       }
 
-      Printf(f_cxx_wrapper, "};\n");
+      Printf(listenerHeader, "};\n");
+      Printf(listenerCall, "};\n");
+      Printf(f_cxx_wrapper, "%s\n\n%s\n\n%s\n", listenerHeader, listenerCall, listenerBody);
     }
 
     String *super = NewString("");
